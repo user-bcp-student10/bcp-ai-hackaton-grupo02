@@ -4,6 +4,7 @@ import {
   invalidRequestError,
   notFoundError,
 } from "./errors.js";
+import { createPaymentCorsMiddleware, DEFAULT_PAYMENT_CORS_ORIGINS } from "./cors.js";
 
 const RECIPIENTS = new Set(["contact-demo", "merchant-demo"]);
 const MAX_PAYMENT_AMOUNT_CENTS = 200_000;
@@ -78,11 +79,16 @@ function sendError(res, error) {
   return res.status(status).json({ error: { code, message } });
 }
 
-export function createApp({ paymentStore, maxPayloadBytes = 16_384 }) {
+export function createApp({
+  paymentStore,
+  maxPayloadBytes = 16_384,
+  corsOrigins = DEFAULT_PAYMENT_CORS_ORIGINS,
+}) {
   const app = express();
   const parseJson = express.json({ limit: maxPayloadBytes, strict: true });
 
   app.disable("x-powered-by");
+  app.use(createPaymentCorsMiddleware(corsOrigins));
   app.get("/health", (req, res) =>
     res.status(200).json({ status: "ok", service: "w2-payment-service" }),
   );

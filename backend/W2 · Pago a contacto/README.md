@@ -18,6 +18,8 @@ npm start
 
 El servicio escucha en `http://localhost:3002`. Si el puerto está ocupado, el inicio falla con un error explícito; no se selecciona otro puerto automáticamente. `PORT` permite elegir un puerto de forma explícita.
 
+CORS permite por defecto el origen local exacto `http://127.0.0.1:4200`. `PAYMENT_CORS_ORIGINS` puede configurarse como lista separada por comas de orígenes explícitos. No se permite `*` ni credenciales/cookies. El preflight habilita `GET` y `POST` para endpoints de pago de cara al frontend, con headers `Content-Type` e `Idempotency-Key`; los endpoints internos de control/callback quedan fuera.
+
 ## Persistencia de pagos
 
 El historial se lee y actualiza en `../../../db/payment-history-by-wallet-id.json`, manteniendo el formato `success.return` de la fixture existente. Las escrituras reemplazan el archivo atómicamente. `PAYMENT_HISTORY_FILE` puede indicar otra ruta de historial cuando sea necesario. La wallet inicial se lee desde `../../../db/wallet-balances.json`; `PAYMENT_WALLETS_FILE` permite indicar una fixture alternativa.

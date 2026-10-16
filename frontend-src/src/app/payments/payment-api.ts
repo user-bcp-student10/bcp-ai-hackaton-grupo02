@@ -23,6 +23,12 @@ export interface PaymentRecord {
   status: PaymentStatus;
   amount?: number | string;
   scenario?: string;
+  idem?: string;
+  fingerprint?: string;
+}
+
+export interface WalletPayment extends Omit<PaymentRecord, 'amount'> {
+  amount: number;
 }
 
 export interface PaymentReceipt {
@@ -58,6 +64,12 @@ export class PaymentApi {
         observe: 'response',
       })
       .pipe(map((response) => this.parsePaymentResponse(response)));
+  }
+
+  listPayments(walletId: string): Observable<WalletPayment[]> {
+    return this.http
+      .get<unknown>(`${this.baseUrl}/payments`, { params: { walletId } })
+      .pipe(map((body) => this.parsePaymentList(body, walletId)));
   }
 
   getPayment(paymentId: string): Observable<PaymentResult> {
@@ -123,5 +135,43 @@ export class PaymentApi {
       throw new PaymentContractError();
     }
     return body as PaymentReceipt;
+  }
+
+  private parsePaymentList(value: unknown, walletId: string): WalletPayment[] {
+    if (!Array.isArray(value)) throw new PaymentContractError();
+
+    return value.map((item) => {
+      const payment = item as Partial<PaymentRecord> | null;
+      const validStatus = ['PENDING', 'SUCCEEDED', 'REJECTED', 'REVERSED'].includes(
+        String(payment?.status),
+      );
+      const validRecipient = ['contact-demo', 'merchant-demo'].includes(
+        String(payment?.recipient),
+      );
+      if (
+        !payment ||
+        typeof payment.id !== 'string' ||
+        payment.id.length === 0 ||
+        payment.wallet_id !== walletId ||
+        !validRecipient ||
+        !validStatus ||
+        typeof payment.amount !== 'number' ||
+        !Number.isFinite(payment.amount) ||
+        payment.amount < 0
+      ) {
+        throw new PaymentContractError();
+      }
+
+      return {
+        id: payment.id,
+        wallet_id: payment.wallet_id,
+        recipient: payment.recipient as PaymentRecipient,
+        amount: payment.amount,
+        status: payment.status as PaymentStatus,
+        scenario: payment.scenario,
+        idem: payment.idem,
+        fingerprint: payment.fingerprint,
+      };
+    });
   }
 }
