@@ -1,0 +1,14 @@
+{
+  "success": {
+    "status": "200",
+    "return": {
+      "id": "payment-001",
+      "amount": 1500,
+      "status": "SUCCEEDED"
+    }
+  },
+  "error": {
+    "status": "500",
+    "message": "Internal Server Error"
+  }
+}

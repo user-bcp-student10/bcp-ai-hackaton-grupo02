@@ -1,0 +1,19 @@
+{
+  "success": {
+    "status": "200",
+    "return": {
+      "id": "payment-001",
+      "wallet_id": "wallet-demo",
+      "recipient": "contact-demo",
+      "amount": 1500,
+      "status": "SUCCEEDED",
+      "scenario": "APPROVED",
+      "idem": "contact-payment-001",
+      "fingerprint": "fp-synthetic-001"
+    }
+  },
+  "error": {
+    "status": "500",
+    "message": "Internal Server Error"
+  }
+}

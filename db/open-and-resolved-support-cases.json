@@ -1,0 +1,17 @@
+{
+  "success": {
+    "status": "200",
+    "return": [
+      {
+        "id": "case-001",
+        "resource": "payment-001",
+        "reason": "PAYMENT_PENDING",
+        "status": "OPEN"
+      }
+    ]
+  },
+  "error": {
+    "status": "500",
+    "message": "Internal Server Error"
+  }
+}

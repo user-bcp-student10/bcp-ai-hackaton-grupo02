@@ -1,0 +1,17 @@
+{
+  "success": {
+    "status": "200",
+    "return": {
+      "id": "wallet-demo",
+      "status": "ACTIVE",
+      "balance": 100000,
+      "reserved": 0,
+      "available": 100000,
+      "currency": "PEN"
+    }
+  },
+  "error": {
+    "status": "500",
+    "message": "Internal Server Error"
+  }
+}
