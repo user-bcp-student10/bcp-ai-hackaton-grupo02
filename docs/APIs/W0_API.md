@@ -4,7 +4,7 @@ Esta API permite registrar una cuenta con credenciales e iniciar sesión para co
 
 ## Flujo de registro e inicio de sesión
 
-1. Envía `POST /auth/signup` con tipo y número de documento ficticios, correo electrónico y contraseña.
+1. Envía `POST /auth/signup` con tipo documental `DNI` o `CE`, un número de documento ficticio, correo electrónico y contraseña.
 2. Completa el onboarding de wallet mediante `POST /kyc/verifications`, descrito en W1.
 3. Envía `POST /auth/login` con el tipo y número de documento registrados y la contraseña.
 4. Guarda el `access_token` y el `expires_in` de la respuesta. No guardes la contraseña.
@@ -26,8 +26,8 @@ Registra una cuenta con documento ficticio, correo y contraseña. No inicia sesi
 
 Campos del cuerpo JSON:
 
-- `documentType`: string, obligatorio. Solo `TEST`; no enviar documentos reales.
-- `document`: string, obligatorio. Documento ficticio con prefijo `TEST-`.
+- `documentType`: string, obligatorio. Valores permitidos: `DNI` o `CE`.
+- `document`: string, obligatorio. Usa un valor ficticio; este contrato no fija un patrón ni longitud adicional.
 - `password`: string, obligatorio. Contraseña para iniciar sesión. No se devuelve en ninguna respuesta.
 - `email`: string, obligatorio. Correo electrónico con formato válido.
 
@@ -35,8 +35,8 @@ Ejemplo:
 
 ```json
 {
-  "documentType": "TEST",
-  "document": "TEST-001",
+  "documentType": "DNI",
+  "document": "00000000",
   "password": "test-password",
   "email": "usuario@example.test"
 }
@@ -55,7 +55,7 @@ Respuesta `201`:
 
 Errores:
 
-- `400 VALIDATION_ERROR`: falta un campo, un campo tiene tipo o formato incorrecto, o `documentType` no es `TEST`.
+- `400 VALIDATION_ERROR`: falta un campo, un campo tiene tipo o formato incorrecto, o `documentType` no es `DNI` ni `CE`.
 - `409 ACCOUNT_ALREADY_EXISTS`: el documento o el correo ya está asociado a una cuenta.
 - `413 PAYLOAD_TOO_LARGE`: cuerpo de la petición demasiado grande.
 - `429 RATE_LIMITED`: se superó el límite de intentos de registro.
@@ -67,16 +67,16 @@ Autentica una cuenta creada previamente mediante `POST /auth/signup` y devuelve 
 
 Campos del cuerpo JSON:
 
-- `documentType`: string, obligatorio. Solo `TEST`; no enviar documentos reales.
-- `document`: string, obligatorio. Documento ficticio registrado, con prefijo `TEST-`.
+- `documentType`: string, obligatorio. Valores permitidos: `DNI` o `CE`.
+- `document`: string, obligatorio. Documento ficticio registrado; este contrato no fija un patrón ni longitud adicional.
 - `password`: string, obligatorio. Contraseña configurada para la cuenta. No se devuelve en ninguna respuesta.
 
 Ejemplo:
 
 ```json
 {
-  "documentType": "TEST",
-  "document": "TEST-001",
+  "documentType": "CE",
+  "document": "00000001",
   "password": "test-password"
 }
 ```
@@ -99,7 +99,7 @@ Respuesta `200`:
 
 Errores:
 
-- `400 VALIDATION_ERROR`: falta un campo, un campo tiene tipo incorrecto o `documentType` no es `TEST`.
+- `400 VALIDATION_ERROR`: falta un campo, un campo tiene tipo incorrecto o `documentType` no es `DNI` ni `CE`.
 - `401 INVALID_CREDENTIALS`: documento o contraseña incorrectos. El mensaje no revela cuál dato falló.
 - `413 PAYLOAD_TOO_LARGE`: cuerpo de la petición demasiado grande.
 - `429 RATE_LIMITED`: se superó el límite de intentos de inicio de sesión.
@@ -110,7 +110,7 @@ Errores:
 - El registro de autenticación y la creación de wallet son pasos separados; debe confirmarse cómo se relacionan sus identificadores.
 - La política de longitud y complejidad de contraseña, verificación de correo, y recuperación/cambio de contraseña debe definirse antes de producción.
 - Debe confirmarse si la respuesta `201` devuelve `account_id` y `status` con el formato propuesto.
-- El uso de documento como identificador se limita a datos ficticios `TEST-`; no enviar documentos personales reales.
+- Usar únicamente datos documentales ficticios de tipo `DNI` o `CE`; no enviar documentos personales reales. `document` se transporta como string.
 - Debe confirmarse si las APIs de pagos y wallet exigirán `Authorization: Bearer <access_token>`. W1 no especifica autenticación para sus endpoints.
 - Deben confirmarse la expiración, renovación y revocación del token. El `expires_in` de ejemplo no es una decisión de producto.
 

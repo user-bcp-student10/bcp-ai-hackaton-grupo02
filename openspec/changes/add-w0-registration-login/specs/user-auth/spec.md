@@ -8,16 +8,16 @@ Esta capacidad permite registrar credenciales e iniciar sesión con documentos f
 
 ### Requirement: Validar datos de registro e inicio de sesión
 
-El sistema SHALL aceptar cada solicitud únicamente cuando sus campos obligatorios sean del tipo esperado y el documento use `documentType` `TEST` y prefijo `TEST-`; el registro también requiere un correo válido. Ante datos inválidos, SHALL responder `400 VALIDATION_ERROR`.
+El sistema SHALL aceptar cada solicitud únicamente cuando sus campos obligatorios sean del tipo esperado y `documentType` sea `DNI` o `CE`; `document` SHALL ser un string. El registro también requiere un correo válido. Ante datos inválidos o un tipo documental no permitido, SHALL responder `400 VALIDATION_ERROR`.
 
 #### Scenario: Registro con datos obligatorios ausentes o inválidos
 
-- **WHEN** el usuario envía el registro sin un campo obligatorio, con un tipo incorrecto, un correo inválido, un `documentType` distinto de `TEST` o un documento sin prefijo `TEST-`
+- **WHEN** el usuario envía el registro sin un campo obligatorio, con un tipo incorrecto, un correo inválido o un `documentType` distinto de `DNI` y `CE`
 - **THEN** el sistema responde `400` con el error `VALIDATION_ERROR` y no crea la cuenta
 
 #### Scenario: Inicio de sesión con datos obligatorios ausentes o inválidos
 
-- **WHEN** el usuario inicia sesión sin un campo obligatorio, con un tipo incorrecto, un `documentType` distinto de `TEST` o un documento sin prefijo `TEST-`
+- **WHEN** el usuario inicia sesión sin un campo obligatorio, con un tipo incorrecto o un `documentType` distinto de `DNI` y `CE`
 - **THEN** el sistema responde `400 VALIDATION_ERROR` sin autenticar la cuenta
 
 ### Requirement: Registrar una cuenta sin iniciar sesión ni crear wallet
@@ -26,7 +26,7 @@ El sistema SHALL registrar credenciales válidas y responder `201` con `account_
 
 #### Scenario: Registro válido
 
-- **WHEN** el usuario envía `POST /auth/signup` con `documentType` `TEST`, un documento `TEST-`, una contraseña y un correo válido que no estén asociados a otra cuenta
+- **WHEN** el usuario envía `POST /auth/signup` con `documentType` `DNI` o `CE`, un documento string, una contraseña y un correo válido que no estén asociados a otra cuenta
 - **THEN** el sistema responde `201` con `account_id` y estado `REGISTERED`, sin token de acceso ni wallet creada
 
 ### Requirement: Rechazar credenciales de cuenta duplicadas
