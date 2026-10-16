@@ -1,5 +1,6 @@
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { DEFAULT_CORS_ORIGINS, parseCorsOrigins } from "./cors.js";
 
 const defaultUsersFilePath = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -31,6 +32,9 @@ export function loadConfig(env = process.env) {
     rateLimitWindowMs: positiveInteger(
       env.AUTH_RATE_LIMIT_WINDOW_MS,
       "AUTH_RATE_LIMIT_WINDOW_MS",
+    ),
+    corsOrigins: parseCorsOrigins(
+      env.AUTH_CORS_ORIGINS ?? DEFAULT_CORS_ORIGINS.join(","),
     ),
   };
 }

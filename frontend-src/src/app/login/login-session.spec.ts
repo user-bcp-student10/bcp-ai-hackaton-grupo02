@@ -11,13 +11,12 @@ describe('LoginSession', () => {
       access_token: 'fake-access-token',
       token_type: 'Bearer',
       expires_in: 3600,
-      wallet_id: 'wallet-001',
-      wallet_status: 'ACTIVE',
+      account_id: 'account-001',
     };
 
     session.start(response);
     expect(session.session()?.accessToken).toBe('fake-access-token');
-    expect(session.session()?.walletId).toBe('wallet-001');
+    expect(session.session()?.accountId).toBe('account-001');
 
     session.clear();
     expect(session.session()).toBeNull();

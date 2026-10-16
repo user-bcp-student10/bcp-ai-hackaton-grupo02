@@ -4,7 +4,7 @@ import { LoginResponse } from './login-api';
 export interface ActiveLoginSession {
   accessToken: string;
   expiresAt: number;
-  walletId: string;
+  accountId: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -16,7 +16,7 @@ export class LoginSession {
     this.current.set({
       accessToken: response.access_token,
       expiresAt: Date.now() + response.expires_in * 1000,
-      walletId: response.wallet_id,
+      accountId: response.account_id,
     });
   }
 

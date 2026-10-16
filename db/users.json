@@ -45,6 +45,42 @@
       "email": "usuario@example.test",
       "passwordSalt": "b651c967a9fa3a392d043f6b9b213044",
       "passwordHash": "ba8aa0512b786ef5a46d7625bd1e8198e5539d8d626acbb5178f5441e02ed30686aff5a8b0473226d2492bc23d691eb06ebc1d0ae43e35c62cc7b875d31246a7"
+    },
+    {
+      "account_id": "account-0c980569-3fc5-4f0d-b475-18fed3a84b37",
+      "documentType": "DNI",
+      "documentDescription": "Documento ficticio de prueba",
+      "document": "42056614",
+      "email": "handre.manriquep@gmail.com",
+      "passwordSalt": "0144090fdcef787d82524e9f957582f8",
+      "passwordHash": "4983d3236d759506489192793de775153b1d1ab03ee6da1abbdde1b44a2f335b97754b3ec49010167647a58ad62b71607dd55823f041afb36112a6a43b0919a4"
+    },
+    {
+      "account_id": "account-9a453533-ce46-43c3-be80-dfbd3c39eade",
+      "documentType": "DNI",
+      "documentDescription": "Documento ficticio de prueba",
+      "document": "70304774",
+      "email": "hector@gmail.com",
+      "passwordSalt": "fb39a7403716f47191626a831283dcc6",
+      "passwordHash": "e9d5edd50dc0079d103e575a9bfe4d479d9488e476bf02d895e89f7080b679fa8358256daa045b197465243b60bac075f312f19b0c466ec035f450c981824469"
+    },
+    {
+      "account_id": "account-40815f8f-b8f1-47a3-833c-4f4da58eb3b9",
+      "documentType": "DNI",
+      "documentDescription": "Documento ficticio de prueba",
+      "document": "70304775",
+      "email": "aaaa@gmail.com",
+      "passwordSalt": "4e8f5443f7d084c37543967b14c5779d",
+      "passwordHash": "f187acb07ad688d67672319fbefee6aafd1842c3347c7093604594d573230736bc3e2b22e1d6c6ac5f7e22cc45db2d2ae85309ad3b97487999fb2f66f17779b0"
+    },
+    {
+      "account_id": "account-6419b035-f408-4b5b-b916-4ea4a9f51f18",
+      "documentType": "DNI",
+      "documentDescription": "Documento ficticio de prueba",
+      "document": "08564403",
+      "email": "fffff@gmail.com",
+      "passwordSalt": "44ef3cae7b9a7cee60f7b68c2e2a9af2",
+      "passwordHash": "0d4e85b5bbab5d440af203d511aa38c3547c793795e7f8c9ae08a84856e9d6b162a419526be7ced53d50b5c9bed835d89dd39659d291cf4f73c52cd9ed565aad"
     }
   ]
 }
