@@ -1,18 +1,18 @@
 # W0 · Registro e inicio de sesión
 
-Esta API permite registrar una cuenta con credenciales e iniciar sesión para consultar el estado de su wallet. Es un contrato propuesto: la HU W1 define el onboarding y la creación de la wallet, pero no las credenciales ni la autenticación.
+Esta API permite registrar una cuenta con credenciales e iniciar sesión para obtener un token de acceso y el identificador de cuenta. La consulta y el estado de la wallet pertenecen a W1 y no forman parte del login W0.
 
 ## Flujo de registro e inicio de sesión
 
-1. Envía `POST /auth/signup` con tipo y número de documento ficticios, correo electrónico y contraseña.
-2. Completa el onboarding de wallet mediante `POST /kyc/verifications`, descrito en W1.
+1. Envía `POST /auth/signup` con tipo y número de documento ficticios, correo electrónico y contraseña. Se admiten `TEST`, `DNI` y `CE`.
+2. Si corresponde, completa el onboarding de wallet por separado mediante `POST /kyc/verifications`, descrito en W1.
 3. Envía `POST /auth/login` con el tipo y número de documento registrados y la contraseña.
 4. Guarda el `access_token` y el `expires_in` de la respuesta. No guardes la contraseña.
-5. Usa el estado de wallet devuelto para mostrar si el usuario está activo, pendiente de revisión o rechazado.
+5. Conserva `account_id` para identificar la cuenta autenticada. La respuesta de login no contiene datos de wallet.
 
 ## Qué debes comprobar
 
-- Unas credenciales válidas devuelven `200` y un token de acceso, incluso si la wallet está `PENDING` o `REJECTED`. El estado no debe ocultarse: permite explicar al usuario qué debe hacer antes de pagar.
+- Unas credenciales válidas devuelven `200`, un token de acceso y `account_id`; login no consulta ni valida una wallet.
 - Unas credenciales inválidas devuelven `401 INVALID_CREDENTIALS`, sin distinguir si el documento existe o si la contraseña es incorrecta.
 - La autenticación no activa una wallet ni cambia su estado. Los pagos siguen sujetos al estado de wallet definido por W1.
 - La respuesta y los errores nunca incluyen la contraseña.
@@ -22,14 +22,22 @@ Esta API permite registrar una cuenta con credenciales e iniciar sesión para co
 
 ### `POST /auth/signup`
 
-Registra una cuenta con documento ficticio, correo y contraseña. No inicia sesión ni crea una wallet; el onboarding y la creación de wallet se realizan mediante la API de W1.
+Registra una cuenta con documento ficticio, correo y contraseña. No inicia sesión ni crea una wallet; el onboarding y la creación de wallet se realizan mediante la API de W1. Los documentos deben ser ficticios, incluso al usar los tipos `DNI` o `CE`.
 
 Campos del cuerpo JSON:
 
-- `documentType`: string, obligatorio. Solo `TEST`; no enviar documentos reales.
-- `document`: string, obligatorio. Documento ficticio con prefijo `TEST-`.
+- `documentType`: string, obligatorio. Valores: `TEST`, `DNI` o `CE`; no enviar documentos reales.
+- `document`: string, obligatorio. Para `TEST`, debe comenzar con `TEST-`; para `DNI`, debe tener exactamente 8 dígitos; para `CE`, exactamente 9 dígitos.
 - `password`: string, obligatorio. Contraseña para iniciar sesión. No se devuelve en ninguna respuesta.
 - `email`: string, obligatorio. Correo electrónico con formato válido.
+
+Ejemplos de formatos ficticios:
+
+| `documentType` | `document` |
+| --- | --- |
+| `TEST` | `TEST-001` |
+| `DNI` | `48391726` |
+| `CE` | `104826371` |
 
 Ejemplo:
 
@@ -55,7 +63,7 @@ Respuesta `201`:
 
 Errores:
 
-- `400 VALIDATION_ERROR`: falta un campo, un campo tiene tipo o formato incorrecto, o `documentType` no es `TEST`.
+- `400 VALIDATION_ERROR`: falta un campo, un campo tiene tipo o formato incorrecto, el correo no es válido o el documento no respeta el formato del tipo (`TEST-`, 8 dígitos DNI o 9 dígitos CE).
 - `409 ACCOUNT_ALREADY_EXISTS`: el documento o el correo ya está asociado a una cuenta.
 - `413 PAYLOAD_TOO_LARGE`: cuerpo de la petición demasiado grande.
 - `429 RATE_LIMITED`: se superó el límite de intentos de registro.
@@ -63,12 +71,12 @@ Errores:
 
 ### `POST /auth/login`
 
-Autentica una cuenta creada previamente mediante `POST /auth/signup` y devuelve un token de acceso. Para esta propuesta, el documento `TEST` identifica la cuenta.
+Autentica una cuenta y devuelve un token de acceso más el `account_id` del registro. No consulta ni valida una wallet. Se admiten documentos ficticios `TEST`, `DNI` y `CE`, con los formatos indicados arriba. Las credenciales de registros DNI/CE heredados también se verifican sin modificar sus filas; si un registro heredado no contiene `account_id`, W0 genera un identificador estable derivado del tipo y documento sin escribirlo en el JSON.
 
 Campos del cuerpo JSON:
 
-- `documentType`: string, obligatorio. Solo `TEST`; no enviar documentos reales.
-- `document`: string, obligatorio. Documento ficticio registrado, con prefijo `TEST-`.
+- `documentType`: string, obligatorio. Valores: `TEST`, `DNI` o `CE`; no enviar documentos reales.
+- `document`: string, obligatorio. Documento ficticio registrado: prefijo `TEST-`, exactamente 8 dígitos para `DNI` o exactamente 9 para `CE`.
 - `password`: string, obligatorio. Contraseña configurada para la cuenta. No se devuelve en ninguna respuesta.
 
 Ejemplo:
@@ -90,27 +98,26 @@ Respuesta `200`:
   "access_token": "<token>",
   "token_type": "Bearer",
   "expires_in": 3600,
-  "wallet_id": "wallet-001",
-  "wallet_status": "ACTIVE"
+  "account_id": "account-001"
 }
 ```
 
-`wallet_status` puede ser `ACTIVE`, `PENDING` o `REJECTED`, según el resultado del onboarding W1. `expires_in` expresa la duración del token en segundos. El valor de ejemplo y el formato concreto del token deben confirmarse al implementar.
+El backend W0 emite un token opaco `Bearer` con duración de 3600 segundos (`expires_in`). La respuesta no contiene datos de wallet; login no depende de que el onboarding W1 se haya completado.
 
 Errores:
 
-- `400 VALIDATION_ERROR`: falta un campo, un campo tiene tipo incorrecto o `documentType` no es `TEST`.
-- `401 INVALID_CREDENTIALS`: documento o contraseña incorrectos. El mensaje no revela cuál dato falló.
+- `400 VALIDATION_ERROR`: falta un campo, un campo tiene tipo incorrecto o el documento no respeta el formato para `TEST`, `DNI` o `CE`.
+- `401 INVALID_CREDENTIALS`: el documento no existe o la contraseña es incorrecta. La respuesta no revela cuál dato falló.
 - `413 PAYLOAD_TOO_LARGE`: cuerpo de la petición demasiado grande.
 - `429 RATE_LIMITED`: se superó el límite de intentos de inicio de sesión.
-- `503 AUTH_UNAVAILABLE`: el servicio de autenticación no está disponible.
+- `503 AUTH_UNAVAILABLE`: el servicio de autenticación o la persistencia/emisión del token no está disponible.
 
 ## Supuestos y preguntas abiertas
 
-- El registro de autenticación y la creación de wallet son pasos separados; debe confirmarse cómo se relacionan sus identificadores.
+- El registro de autenticación y la creación/consulta de wallet son pasos separados. W0 no asocia, consulta ni valida wallets durante login.
 - La política de longitud y complejidad de contraseña, verificación de correo, y recuperación/cambio de contraseña debe definirse antes de producción.
 - Debe confirmarse si la respuesta `201` devuelve `account_id` y `status` con el formato propuesto.
-- El uso de documento como identificador se limita a datos ficticios `TEST-`; no enviar documentos personales reales.
+- Los formatos aceptados son `TEST-`, DNI de 8 dígitos y CE de 9 dígitos, pero los datos usados deben ser ficticios; no enviar documentos personales reales.
 - Debe confirmarse si las APIs de pagos y wallet exigirán `Authorization: Bearer <access_token>`. W1 no especifica autenticación para sus endpoints.
 - Deben confirmarse la expiración, renovación y revocación del token. El `expires_in` de ejemplo no es una decisión de producto.
 

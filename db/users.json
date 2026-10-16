@@ -1,6 +1,7 @@
 {
   "success": [
     {
+      "account_id": "account-a90e0f2e-2786-40bd-8695-da73a650d6fa",
       "documentType": "DNI",
       "documentDescription": "DNI",
       "document": "48391726",
@@ -8,6 +9,7 @@
       "email": "camila.rios@test-mail.test"
     },
     {
+      "account_id": "account-a90e0f2e-2786-40bd-8695-da73a650d6fb",
       "documentType": "CE",
       "documentDescription": "Carnet de extranjería",
       "document": "104826371",
@@ -34,6 +36,15 @@
       "document": "31659284",
       "password": "Cedro^Lluvia_91Mar",
       "email": "lucia.vega@test-mail.test"
+    },
+    {
+      "account_id": "account-a90e0f2e-2786-40bd-8695-da73a650d6fe",
+      "documentType": "TEST",
+      "documentDescription": "Documento ficticio de prueba",
+      "document": "TEST-001",
+      "email": "usuario@example.test",
+      "passwordSalt": "b651c967a9fa3a392d043f6b9b213044",
+      "passwordHash": "ba8aa0512b786ef5a46d7625bd1e8198e5539d8d626acbb5178f5441e02ed30686aff5a8b0473226d2492bc23d691eb06ebc1d0ae43e35c62cc7b875d31246a7"
     }
   ]
 }
