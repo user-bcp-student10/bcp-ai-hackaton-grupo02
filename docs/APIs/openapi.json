@@ -3,7 +3,7 @@
   "info": {
     "title": "Wallet mock W0–W6",
     "version": "0.1.0",
-    "description": "Mock público de la hackatón para 8 grupos fijos. Selecciona el servidor de tu grupo. Estado en memoria por grupo, sin persistencia; puede reiniciarse por inactividad o despliegue. PEN en céntimos. Solo datos TEST. CORS habilitado. Incluye registro e inicio de sesión W0."
+    "description": "Mock público de la hackatón para 8 grupos fijos. Selecciona el servidor de tu grupo. Estado en memoria por grupo, sin persistencia; puede reiniciarse por inactividad o despliegue. PEN en céntimos. W0 acepta documentos ficticios TEST, DNI y CE; W1 continúa limitado a documentos TEST. CORS habilitado. Incluye registro e inicio de sesión W0."
   },
   "servers": [
     {
@@ -82,32 +82,94 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "documentType": {
-                    "type": "string",
-                    "enum": [
-                      "TEST"
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "documentType": {
+                        "type": "string",
+                        "enum": [
+                          "TEST"
+                        ]
+                      },
+                      "document": {
+                        "type": "string",
+                        "pattern": "^TEST-.+$"
+                      },
+                      "password": {
+                        "type": "string",
+                        "writeOnly": true
+                      },
+                      "email": {
+                        "type": "string",
+                        "format": "email"
+                      }
+                    },
+                    "required": [
+                      "documentType",
+                      "document",
+                      "password",
+                      "email"
                     ]
                   },
-                  "document": {
-                    "type": "string",
-                    "pattern": "^TEST-"
+                  {
+                    "type": "object",
+                    "properties": {
+                      "documentType": {
+                        "type": "string",
+                        "enum": [
+                          "DNI"
+                        ]
+                      },
+                      "document": {
+                        "type": "string",
+                        "pattern": "^[0-9]{8}$"
+                      },
+                      "password": {
+                        "type": "string",
+                        "writeOnly": true
+                      },
+                      "email": {
+                        "type": "string",
+                        "format": "email"
+                      }
+                    },
+                    "required": [
+                      "documentType",
+                      "document",
+                      "password",
+                      "email"
+                    ]
                   },
-                  "password": {
-                    "type": "string",
-                    "writeOnly": true
-                  },
-                  "email": {
-                    "type": "string",
-                    "format": "email"
+                  {
+                    "type": "object",
+                    "properties": {
+                      "documentType": {
+                        "type": "string",
+                        "enum": [
+                          "CE"
+                        ]
+                      },
+                      "document": {
+                        "type": "string",
+                        "pattern": "^[0-9]{9}$"
+                      },
+                      "password": {
+                        "type": "string",
+                        "writeOnly": true
+                      },
+                      "email": {
+                        "type": "string",
+                        "format": "email"
+                      }
+                    },
+                    "required": [
+                      "documentType",
+                      "document",
+                      "password",
+                      "email"
+                    ]
                   }
-                },
-                "required": [
-                  "documentType",
-                  "document",
-                  "password",
-                  "email"
                 ]
               }
             }
@@ -141,7 +203,7 @@
             }
           },
           "400": {
-            "description": "VALIDATION_ERROR: falta un campo, un campo tiene tipo o formato incorrecto, el correo no es válido, documentType no es TEST o document no tiene el prefijo TEST-."
+            "description": "VALIDATION_ERROR: falta un campo, un campo tiene tipo o formato incorrecto, el correo no es válido o document no respeta el formato del documentType (TEST con prefijo TEST-, DNI de 8 dígitos o CE de 9 dígitos)."
           },
           "409": {
             "description": "ACCOUNT_ALREADY_EXISTS: el documento o correo ya está asociado a otra cuenta."
@@ -165,33 +227,85 @@
       "post": {
         "operationId": "login",
         "summary": "Iniciar sesión",
-        "description": "Autentica con el tipo y número de documento registrados y la contraseña. Las credenciales válidas reciben un token incluso si la wallet está PENDING o REJECTED. La autenticación no activa ni cambia el estado de la wallet. No devuelve la contraseña.",
+        "description": "Autentica con el tipo y número de documento ficticio registrados y la contraseña. Se admiten TEST, DNI de 8 dígitos y CE de 9 dígitos. Las credenciales heredadas DNI/CE se verifican sin modificar sus filas. El login no consulta ni valida una wallet. No devuelve la contraseña.",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "documentType": {
-                    "type": "string",
-                    "enum": [
-                      "TEST"
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "documentType": {
+                        "type": "string",
+                        "enum": [
+                          "TEST"
+                        ]
+                      },
+                      "document": {
+                        "type": "string",
+                        "pattern": "^TEST-.+$"
+                      },
+                      "password": {
+                        "type": "string",
+                        "writeOnly": true
+                      }
+                    },
+                    "required": [
+                      "documentType",
+                      "document",
+                      "password"
                     ]
                   },
-                  "document": {
-                    "type": "string",
-                    "pattern": "^TEST-"
+                  {
+                    "type": "object",
+                    "properties": {
+                      "documentType": {
+                        "type": "string",
+                        "enum": [
+                          "DNI"
+                        ]
+                      },
+                      "document": {
+                        "type": "string",
+                        "pattern": "^[0-9]{8}$"
+                      },
+                      "password": {
+                        "type": "string",
+                        "writeOnly": true
+                      }
+                    },
+                    "required": [
+                      "documentType",
+                      "document",
+                      "password"
+                    ]
                   },
-                  "password": {
-                    "type": "string",
-                    "writeOnly": true
+                  {
+                    "type": "object",
+                    "properties": {
+                      "documentType": {
+                        "type": "string",
+                        "enum": [
+                          "CE"
+                        ]
+                      },
+                      "document": {
+                        "type": "string",
+                        "pattern": "^[0-9]{9}$"
+                      },
+                      "password": {
+                        "type": "string",
+                        "writeOnly": true
+                      }
+                    },
+                    "required": [
+                      "documentType",
+                      "document",
+                      "password"
+                    ]
                   }
-                },
-                "required": [
-                  "documentType",
-                  "document",
-                  "password"
                 ]
               }
             }
@@ -199,7 +313,7 @@
         },
         "responses": {
           "200": {
-            "description": "Inicio de sesión correcto; el estado de la wallet se devuelve sin alterarlo.",
+            "description": "Inicio de sesión correcto; devuelve el token y el identificador de cuenta sin consultar una wallet.",
             "content": {
               "application/json": {
                 "schema": {
@@ -221,35 +335,26 @@
                       "description": "Duración del token en segundos.",
                       "example": 3600
                     },
-                    "wallet_id": {
+                    "account_id": {
                       "type": "string",
-                      "example": "wallet-001"
-                    },
-                    "wallet_status": {
-                      "type": "string",
-                      "enum": [
-                        "ACTIVE",
-                        "PENDING",
-                        "REJECTED"
-                      ]
+                      "example": "account-001"
                     }
                   },
                   "required": [
                     "access_token",
                     "token_type",
                     "expires_in",
-                    "wallet_id",
-                    "wallet_status"
+                    "account_id"
                   ]
                 }
               }
             }
           },
           "400": {
-            "description": "VALIDATION_ERROR: falta un campo, un campo tiene tipo incorrecto, documentType no es TEST o document no tiene el prefijo TEST-."
+            "description": "VALIDATION_ERROR: falta un campo, un campo tiene tipo incorrecto o document no respeta el formato del documentType (TEST con prefijo TEST-, DNI de 8 dígitos o CE de 9 dígitos)."
           },
           "401": {
-            "description": "INVALID_CREDENTIALS: documento o contraseña incorrectos; la respuesta no distingue cuál falló."
+            "description": "INVALID_CREDENTIALS: el documento no existe o la contraseña es incorrecta; la respuesta no distingue cuál falló."
           },
           "413": {
             "description": "PAYLOAD_TOO_LARGE: el cuerpo de la petición excede el tamaño permitido."
@@ -258,7 +363,7 @@
             "description": "RATE_LIMITED: se superó el límite de intentos de inicio de sesión."
           },
           "503": {
-            "description": "AUTH_UNAVAILABLE: el servicio de autenticación no está disponible."
+            "description": "AUTH_UNAVAILABLE: el servicio de autenticación o la persistencia/emisión del token no está disponible."
           }
         },
         "tags": [
