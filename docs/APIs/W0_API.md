@@ -43,8 +43,8 @@ Ejemplo:
 
 ```json
 {
-  "documentType": "TEST",
-  "document": "TEST-001",
+  "documentType": "DNI",
+  "document": "00000000",
   "password": "test-password",
   "email": "usuario@example.test"
 }
@@ -83,8 +83,8 @@ Ejemplo:
 
 ```json
 {
-  "documentType": "TEST",
-  "document": "TEST-001",
+  "documentType": "CE",
+  "document": "000000001",
   "password": "test-password"
 }
 ```
