@@ -16,11 +16,11 @@ En el repositorio inspeccionado hay documentación y artefactos OpenSpec, pero n
 **Non-Goals:**
 - Cambiar los contratos HTTP de W0 o W1, diseñar el resto de la aplicación o implementar pagos/onboarding.
 - Definir recuperación de contraseña, verificación de correo, reglas de complejidad no especificadas, ni un formato concreto del token.
-- Usar documentos personales reales: el alcance permanece restringido a documentos ficticios `TEST`.
+- Usar documentos personales reales: el alcance permanece restringido a valores ficticios con tipo `DNI` o `CE`.
 
 ## Protected Contracts
 
-- Signup valida `documentType=TEST`, prefijo `TEST-`, campos requeridos y correo válido; produce `201` con `account_id` y `REGISTERED`, sin token ni wallet. Documento o correo duplicado produce `409 ACCOUNT_ALREADY_EXISTS`.
+- Signup valida `documentType` `DNI` o `CE`, campos requeridos y correo válido; `document` se conserva como string sin patrón o longitud adicional en este contrato. Produce `201` con `account_id` y `REGISTERED`, sin token ni wallet. Documento o correo duplicado produce `409 ACCOUNT_ALREADY_EXISTS`.
 - Login exitoso posterior al onboarding devuelve `access_token`, `token_type=Bearer`, `expires_in`, `wallet_id` y `wallet_status`; conserva los estados W1 `ACTIVE`, `PENDING` y `REJECTED`. No activa ni modifica la wallet.
 - Credenciales incorrectas producen el mismo `401 INVALID_CREDENTIALS`, sin revelar si falló documento o contraseña. Ninguna respuesta ni error contiene la contraseña.
 - Se preservan `400 VALIDATION_ERROR`, `413 PAYLOAD_TOO_LARGE`, `429 RATE_LIMITED` y `503 AUTH_UNAVAILABLE` en sus condiciones contractuales.
@@ -29,7 +29,7 @@ En el repositorio inspeccionado hay documentación y artefactos OpenSpec, pero n
 ## Components Affected
 
 - Adaptadores HTTP de signup/login y validación de sus cuerpos/respuestas.
-- Servicio de cuentas y persistencia de identificadores TEST y credenciales; restricciones únicas para documento y correo.
+- Servicio de cuentas y persistencia de tipo/número documental DNI o CE y credenciales; restricciones únicas para documento y correo.
 - Verificación de credenciales y emisión de token, con secretos nunca serializados en respuestas o errores.
 - Integración interna con onboarding W1 para persistir la asociación explícita entre cuenta y wallet; login lee el estado vigente de W1, no mantiene una copia autoritativa.
 - Límites compartidos de tamaño de solicitud, limitación de intentos y traducción de errores, reutilizando mecanismos existentes si los hay.

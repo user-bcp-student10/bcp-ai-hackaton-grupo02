@@ -6,7 +6,7 @@ W0 necesita un contrato verificable para que los usuarios puedan crear credencia
 
 ## What Changes
 
-- Definir el comportamiento observable de registro e inicio de sesión para cuentas con documentos ficticios `TEST`.
+- Definir el comportamiento observable de registro e inicio de sesión para cuentas con documentos ficticios de tipo `DNI` o `CE`.
 - Mantener el registro separado del inicio de sesión y de la creación de wallet de W1.
 - Especificar los resultados de validación, duplicidad, credenciales incorrectas, límites de solicitud y falta de disponibilidad descritos por el contrato W0.
 - Preservar el acceso para wallets `ACTIVE`, `PENDING` y `REJECTED`, sin que la autenticación active o cambie el estado de una wallet.
