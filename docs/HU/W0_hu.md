@@ -7,7 +7,7 @@ para consultar el estado de mi wallet y acceder a las funciones disponibles para
 ## Criterios de aceptación
 
 1. El usuario puede registrarse proporcionando `documentType`, `document`, `password` y `email`.
-2. Si falta un dato obligatorio, un dato tiene tipo o formato incorrecto, el correo no tiene un formato válido, `documentType` no es `TEST` o el documento no tiene el prefijo `TEST-`, el registro se rechaza con `400 VALIDATION_ERROR`.
+2. Si falta un dato obligatorio, un dato tiene tipo o formato incorrecto, el correo no tiene un formato válido o `documentType` no es `DNI` ni `CE`, el registro se rechaza con `400 VALIDATION_ERROR`.
 3. Si el documento o el correo ya está asociado a una cuenta, el registro se rechaza con `409 ACCOUNT_ALREADY_EXISTS`.
 4. Si el registro es válido, el sistema responde `201` con `account_id` y estado `REGISTERED`. El registro no inicia sesión ni crea una wallet.
 5. El usuario puede iniciar sesión con el tipo y número de documento registrados y su contraseña. Si las credenciales son válidas, el sistema responde `200` con un token de acceso, el identificador de la wallet y su estado, que puede ser `ACTIVE`, `PENDING` o `REJECTED`.
@@ -24,7 +24,7 @@ para consultar el estado de mi wallet y acceder a las funciones disponibles para
 
 ## Supuestos
 
-- El MVP usa exclusivamente documentos ficticios: `documentType` debe ser `TEST` y `document` debe tener el prefijo `TEST-`.
+- El MVP usa exclusivamente datos documentales ficticios: `documentType` debe ser `DNI` o `CE`, y `document` se envía como string sin patrón ni longitud adicional definidos por esta historia.
 - El correo debe tener un formato válido, y no se permite reutilizar el documento ni el correo de otra cuenta.
 - El registro y el inicio de sesión usan el contrato de respuesta descrito en W0_API; los formatos propuestos de `account_id`, `status` y token deben confirmarse al implementar.
 
