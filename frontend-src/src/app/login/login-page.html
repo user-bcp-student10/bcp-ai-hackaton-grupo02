@@ -10,29 +10,22 @@
   <main class="login-layout">
     <section class="login-intro" aria-labelledby="login-title">
       <p class="eyebrow">ACCESO A TU CUENTA</p>
-      <h1 id="login-title">Tu wallet, en su estado real.</h1>
+      <h1 id="login-title">Vuelve a tu cuenta.</h1>
       <p class="intro-copy">
-        Inicia sesión con las credenciales de prueba. El acceso solo continúa cuando la wallet está activa.
+        Inicia sesión con las credenciales de prueba. W0 valida tu cuenta sin consultar el estado de una wallet.
       </p>
-      <div class="state-key" aria-label="Estados de wallet">
-        <span class="state-dot active" aria-hidden="true"></span><span>ACTIVE</span>
-        <span class="state-dot pending" aria-hidden="true"></span><span>PENDING</span>
-        <span class="state-dot rejected" aria-hidden="true"></span><span>REJECTED</span>
-      </div>
     </section>
 
     <section class="login-panel" aria-labelledby="form-title">
-      @if (activeWallet(); as wallet) {
-        <div class="active-state" role="status" aria-live="polite">
-          <span class="active-mark" aria-hidden="true">✓</span>
+      @if (authenticatedAccount(); as account) {
+        <div class="authenticated-state" role="status" aria-live="polite">
+          <span class="session-mark" aria-hidden="true">✓</span>
           <p class="eyebrow">ACCESO CONFIRMADO</p>
-          <h2 id="form-title">Wallet activa</h2>
-          <p>Tu sesión está disponible en memoria durante esta visita.</p>
-          <dl class="wallet-reference">
-            <dt>Wallet</dt>
-            <dd>{{ wallet.walletId }}</dd>
-            <dt>Estado</dt>
-            <dd><span class="active-pill">ACTIVE</span></dd>
+          <h2 id="form-title">Sesión iniciada</h2>
+          <p>Tu sesión está disponible en memoria durante esta visita. El estado de wallet no forma parte de esta respuesta.</p>
+          <dl class="account-reference">
+            <dt>Cuenta</dt>
+            <dd>{{ account.accountId }}</dd>
           </dl>
           <a class="payment-link" routerLink="/payments/new">Crear pago</a>
           <button class="secondary-button" type="button" (click)="logout()">Cerrar sesión</button>

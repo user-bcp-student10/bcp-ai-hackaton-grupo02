@@ -37,6 +37,7 @@ function createHarness({
   maxPayloadBytes = 4096,
   rateLimitMax = 100,
   rateLimitWindowMs = 60_000,
+  corsOrigins,
   authServiceOverride,
 } = {}) {
   const temporaryDirectory = mkdtempSync(path.join(os.tmpdir(), "w0-auth-test-"));
@@ -50,6 +51,7 @@ function createHarness({
     maxPayloadBytes,
     rateLimitMax,
     rateLimitWindowMs,
+    ...(corsOrigins ? { corsOrigins } : {}),
   });
   const server = createServer(app);
 
@@ -73,10 +75,10 @@ async function startHarness(options) {
     store: harness.store,
     server: harness.server,
     usersFilePath: harness.usersFilePath,
-    async request(path, body) {
+    async request(path, body, headers = {}) {
       return fetch(`${baseUrl}${path}`, {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: { "content-type": "application/json", ...headers },
         body: JSON.stringify(body),
       });
     },
@@ -524,6 +526,68 @@ describe("W0 signup y login", () => {
       }
     } finally {
       await unavailableHarness.close();
+    }
+  });
+
+  it("permite el origen del frontend y expone solo POST/OPTIONS y Content-Type", async () => {
+    const corsHarness = await startHarness();
+    try {
+      const response = await corsHarness.request("/auth/signup", validSignup, {
+        Origin: "http://127.0.0.1:4200",
+      });
+      assert.equal(response.status, 201);
+      assert.equal(response.headers.get("access-control-allow-origin"), "http://127.0.0.1:4200");
+      assert.equal(response.headers.get("access-control-allow-credentials"), null);
+      assert.match(response.headers.get("vary") ?? "", /Origin/u);
+    } finally {
+      await corsHarness.close();
+    }
+  });
+
+  it("responde al preflight del frontend solo para POST de signup/login", async () => {
+    const corsHarness = await startHarness();
+    try {
+      const response = await fetch(`${corsHarness.server.address().address ? `http://127.0.0.1:${corsHarness.server.address().port}` : ""}/auth/signup`, {
+        method: "OPTIONS",
+        headers: {
+          Origin: "http://127.0.0.1:4200",
+          "Access-Control-Request-Method": "POST",
+          "Access-Control-Request-Headers": "content-type",
+        },
+      });
+      assert.equal(response.status, 204);
+      assert.equal(response.headers.get("access-control-allow-methods"), "POST, OPTIONS");
+      assert.equal(response.headers.get("access-control-allow-headers"), "Content-Type");
+      assert.equal(response.headers.get("access-control-allow-credentials"), null);
+    } finally {
+      await corsHarness.close();
+    }
+  });
+
+  it("rechaza orígenes no autorizados antes de ejecutar la operación", async () => {
+    let signupCalls = 0;
+    const corsHarness = await startHarness({
+      authServiceOverride: {
+        async signup() {
+          signupCalls += 1;
+          return { account_id: "account-should-not-exist", status: "REGISTERED" };
+        },
+        async login() {
+          throw new Error("unexpected login call");
+        },
+      },
+    });
+    try {
+      const response = await corsHarness.request("/auth/signup", validSignup, {
+        Origin: "https://untrusted.example",
+      });
+      const body = await response.json();
+      assert.equal(response.status, 403);
+      assert.equal(body.error.code, "CORS_ORIGIN_NOT_ALLOWED");
+      assert.equal(response.headers.get("access-control-allow-origin"), null);
+      assert.equal(signupCalls, 0);
+    } finally {
+      await corsHarness.close();
     }
   });
 });

@@ -63,13 +63,12 @@ describe('LoginPage', () => {
     expect(fixture.nativeElement.textContent).toContain('obligatorio');
   });
 
-  it('starts an in-memory session only for HTTP 200 with an ACTIVE wallet', () => {
+  it('starts an in-memory session for a successful W0 account response', () => {
     const response: LoginResponse = {
       access_token: 'fake-access-token',
       token_type: 'Bearer',
       expires_in: 3600,
-      wallet_id: 'wallet-001',
-      wallet_status: 'ACTIVE',
+      account_id: 'account-001',
     };
     login.mockReturnValue(of(response));
     fillForm('00000001', 'CE');
@@ -81,25 +80,10 @@ describe('LoginPage', () => {
       password: 'test-password',
     };
     expect(login).toHaveBeenCalledWith(expectedRequest);
-    expect(fixture.nativeElement.textContent).toContain('Wallet activa');
+    expect(fixture.nativeElement.textContent).toContain('Sesión iniciada');
+    expect(fixture.nativeElement.textContent).toContain('account-001');
     expect(fixture.nativeElement.textContent).not.toContain('fake-access-token');
-    expect(session.session()?.accessToken).toBe('fake-access-token');
-  });
-
-  it.each(['PENDING', 'REJECTED'] as const)('blocks a %s wallet without creating a session', (walletStatus) => {
-    login.mockReturnValue(of({
-      access_token: 'fake-access-token',
-      token_type: 'Bearer',
-      expires_in: 3600,
-      wallet_id: 'wallet-001',
-      wallet_status: walletStatus,
-    }));
-    fillForm('00000002');
-    submit();
-
-    expect(fixture.nativeElement.querySelector('[role="alert"]')?.textContent).toContain(walletStatus);
-    expect(fixture.nativeElement.textContent).not.toContain('fake-access-token');
-    expect(session.session()).toBeNull();
+    expect(session.session()?.accountId).toBe('account-001');
   });
 
   it('uses a generic message for invalid credentials and hides backend details', () => {

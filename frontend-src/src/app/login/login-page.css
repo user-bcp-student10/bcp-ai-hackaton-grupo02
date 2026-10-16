@@ -11,10 +11,6 @@
 h1, h2, p { margin-top: 0; }
 h1 { max-width: 10ch; margin-bottom: 1.25rem; color: var(--ink); font-family: Georgia, 'Times New Roman', serif; font-size: 3.75rem; font-weight: 500; line-height: 1.03; }
 .intro-copy { max-width: 39ch; color: var(--muted); font-size: 1.05rem; line-height: 1.7; }
-.state-key { display: flex; align-items: center; gap: .5rem; margin-top: 2rem; color: var(--muted); font-family: 'Cascadia Code', Consolas, monospace; font-size: .7rem; }
-.state-dot { width: 9px; aspect-ratio: 1; margin-left: .45rem; border-radius: 50%; }
-.state-dot:first-child { margin-left: 0; }
-.active { background: #477c4d; }.pending { background: #c08b36; }.rejected { background: #bb594b; }
 .login-panel { width: 100%; padding: clamp(1.4rem, 3vw, 2.15rem); border: 2px solid var(--ink); border-top: 8px solid var(--forest); border-radius: 4px; background: var(--surface); box-shadow: 7px 7px 0 var(--ink); }
 .panel-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1.55rem; }
 .panel-heading .eyebrow { margin-bottom: .45rem; }
@@ -32,10 +28,9 @@ input::placeholder { color: #859187; }input:focus-visible { outline: 3px solid r
 .submit-button:hover:not(:disabled), .secondary-button:hover { background: #164b37; }.submit-button:focus-visible, .secondary-button:focus-visible { outline: 3px solid #8dbb9f; outline-offset: 3px; }.submit-button:disabled { cursor: wait; opacity: .76; }
 .button-spinner { width: 16px; aspect-ratio: 1; border: 2px solid rgb(255 255 255 / 45%); border-top-color: white; border-radius: 50%; animation: spin 700ms linear infinite; }
 .form-footnote { margin: -.25rem 0 0; color: var(--muted); font-size: .74rem; line-height: 1.5; text-align: center; }
-.active-state { display: grid; justify-items: start; gap: .85rem; }.active-state .eyebrow, .active-state h2, .active-state p { margin-bottom: 0; }.active-state > p:not(.eyebrow) { color: var(--muted); line-height: 1.6; }
-.active-mark { display: grid; width: 46px; aspect-ratio: 1; place-items: center; border-radius: 50%; background: var(--lime); color: var(--ink); font-size: 1.2rem; font-weight: 800; }
-.wallet-reference { width: 100%; margin: .35rem 0; padding: .9rem; border: 1px solid var(--line); border-radius: 5px; background: #f7f8f4; }.wallet-reference dt { margin-bottom: .35rem; color: var(--muted); font-size: .72rem; }.wallet-reference dd { overflow-wrap: anywhere; margin: 0 0 .7rem; color: var(--ink); font-family: 'Cascadia Code', Consolas, monospace; font-size: .9rem; }.wallet-reference dd:last-child { margin-bottom: 0; }
-.active-pill { color: var(--forest); font-weight: 800; }.secondary-button { width: 100%; margin-top: .3rem; }
+.authenticated-state { display: grid; justify-items: start; gap: .85rem; }.authenticated-state .eyebrow, .authenticated-state h2, .authenticated-state p { margin-bottom: 0; }.authenticated-state > p:not(.eyebrow) { color: var(--muted); line-height: 1.6; }
+.session-mark { display: grid; width: 46px; aspect-ratio: 1; place-items: center; border-radius: 50%; background: var(--lime); color: var(--ink); font-size: 1.2rem; font-weight: 800; }
+.account-reference { width: 100%; margin: .35rem 0; padding: .9rem; border: 1px solid var(--line); border-radius: 5px; background: #f7f8f4; }.account-reference dt { margin-bottom: .35rem; color: var(--muted); font-size: .72rem; }.account-reference dd { overflow-wrap: anywhere; margin: 0; color: var(--ink); font-family: 'Cascadia Code', Consolas, monospace; font-size: .9rem; }.secondary-button { width: 100%; margin-top: .3rem; }
 .payment-link { width: 100%; min-height: 46px; display: flex; align-items: center; justify-content: center; border-radius: 3px; background: var(--coral); color: white; font-size: .9rem; font-weight: 750; text-decoration: none; }.payment-link:hover { background: #c9513a; }.payment-link:focus-visible { outline: 3px solid #8dbb9f; outline-offset: 3px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (max-width: 760px) { .login-topbar { min-height: 66px; padding-inline: 1rem; }.login-layout { width: min(540px, calc(100% - 2rem)); min-height: calc(100vh - 66px); grid-template-columns: 1fr; gap: 1.6rem; padding-block: 2.1rem 2.7rem; }.login-intro { padding-block: 0; }h1 { max-width: 13ch; font-size: 2.55rem; } }

@@ -5,6 +5,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { LoginSession } from '../login/login-session';
+import { environment } from '../../environments/environment';
 import {
   CreatePaymentRequest,
   MAX_PAYMENT_AMOUNT_CENTS,
@@ -64,7 +65,7 @@ export class PaymentPage {
   });
 
   protected get walletId(): string {
-    return this.loginSession.session()?.walletId ?? 'wallet-demo';
+    return environment.w2WalletId;
   }
 
   protected get amountError(): string {
