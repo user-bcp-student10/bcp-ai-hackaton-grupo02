@@ -1,24 +1,39 @@
 {
   "fixtures": [
     {
-      "account_id": "account-test-001",
-      "status": "REGISTERED"
+      "documentType": "DNI",
+      "documentDescription": "DNI",
+      "document": "48391726",
+      "password": "R3loj!Bosque_Cobre",
+      "email": "camila.rios@test-mail.test"
     },
     {
-      "account_id": "account-test-002",
-      "status": "REGISTERED"
+      "documentType": "CE",
+      "documentDescription": "Carnet de extranjería",
+      "document": "104826371",
+      "password": "Nube#Tren_84Lago",
+      "email": "mateo.salas@test-mail.test"
     },
     {
-      "account_id": "account-test-003",
-      "status": "REGISTERED"
+      "documentType": "DNI",
+      "documentDescription": "DNI",
+      "document": "57280419",
+      "password": "Menta!Papel_62Sol",
+      "email": "valeria.paz@test-mail.test"
     },
     {
-      "account_id": "account-test-004",
-      "status": "REGISTERED"
+      "documentType": "CE",
+      "documentDescription": "Carnet de extranjería",
+      "document": "209471638",
+      "password": "Faro$Naranja_27Rio",
+      "email": "diego.mora@test-mail.test"
     },
     {
-      "account_id": "account-test-005",
-      "status": "REGISTERED"
+      "documentType": "DNI",
+      "documentDescription": "DNI",
+      "document": "31659284",
+      "password": "Cedro^Lluvia_91Mar",
+      "email": "lucia.vega@test-mail.test"
     }
   ]
 }
