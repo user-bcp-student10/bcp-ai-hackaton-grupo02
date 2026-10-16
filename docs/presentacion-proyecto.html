@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#081b32">
-  <title>Wallet MVP Perú | Presentación del proyecto</title>
+  <title>Wali | Presentación del proyecto</title>
   <style>
     :root {
       color-scheme: dark;
@@ -126,6 +126,8 @@
 
     .cover-content { max-width: 900px; margin: auto 0; }
     .cover-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 34px; }
+    .team-members { margin: 20px 0 0; color: #dce8f3; font-size: 15px; line-height: 1.55; }
+    .team-members strong { color: var(--teal); }
     .pill {
       display: inline-flex;
       align-items: center;
@@ -300,16 +302,17 @@
   </style>
 </head>
 <body>
-  <main class="stage" id="presentation" aria-label="Presentación del proyecto Wallet MVP Perú">
+  <main class="stage" id="presentation" aria-label="Presentación del proyecto Wali">
     <section class="slide active" aria-label="Diapositiva 1: Portada">
       <div class="topline">
-        <span class="brand"><span class="brand-mark">W</span> BCP AI Hackathon · Grupo 02</span>
+        <span class="brand"><span class="brand-mark">WA</span> Wali · BCP AI Hackathon · Grupo 02</span>
         <span class="pill">Avance parcial en W1 + W2</span>
       </div>
       <div class="cover-content">
-        <p class="eyebrow">Wallet MVP · Perú</p>
+        <p class="eyebrow">Wali · Wallet digital para Perú</p>
         <h1>Pagos cotidianos,<br><span class="accent">con confianza</span></h1>
         <p class="lead">Una experiencia de wallet enfocada en simplificar el registro, orientar al usuario y dar claridad sobre el resultado de sus pagos.</p>
+        <p class="team-members"><strong>Equipo 02:</strong> Cesar Aiquipa · Gianfranco Carrasco · Hector Manrique · Jorge Hirahoka · Milu Robles · Roberto Navarro</p>
         <div class="cover-meta">
           <span class="pill">Angular · Frontend</span>
           <span class="pill">Node.js · APIs</span>
@@ -319,25 +322,36 @@
       <div class="footer"><span>Qué resolvemos · qué aplicamos · qué sigue</span><span>01 / 07</span></div>
     </section>
 
-    <section class="slide" aria-label="Diapositiva 2: El reto">
-      <div class="topline"><span class="brand"><span class="brand-mark">W</span> Wallet MVP · Perú</span><span class="pill">01 · El reto</span></div>
+    <section class="slide" aria-label="Diapositiva 2: Qué busca resolver Wali">
+      <div class="topline"><span class="brand"><span class="brand-mark">WA</span> Wali · Perú</span><span class="pill">01 · El problema</span></div>
       <div>
-        <p class="eyebrow">La oportunidad</p>
-        <h2>Menos fricción en el checkout.<br><span class="accent">Más claridad para cada usuario.</span></h2>
-        <p class="lead">El proyecto aborda dos momentos sensibles: empezar a usar una wallet y saber con certeza qué pasó con un pago.</p>
-        <div class="grid four" style="margin-top:24px">
-          <div class="metric"><b>30% → 8%</b><span>Objetivo de reducción de abandono en checkout*</span></div>
-          <div class="metric"><b>8 → 3 min</b><span>Objetivo de duración del onboarding*</span></div>
-          <div class="metric"><b>1–2 mil</b><span>MAU objetivo en los primeros meses*</span></div>
-          <div class="metric"><b>PEN 10</b><span>Objetivo de CAC por nuevo usuario*</span></div>
+        <p class="eyebrow">Qué busca resolver Wali</p>
+        <h2>Que empezar a pagar sea simple y saber el resultado, claro.</h2>
+        <p class="lead">Wali apunta a reducir la fricción del onboarding y la incertidumbre al pagar, especialmente en transacciones cotidianas de bajo monto.</p>
+        <div class="grid three" style="margin-top:20px">
+          <article class="card">
+            <div class="number">01 / INCORPORACIÓN</div>
+            <h3>Un inicio más sencillo</h3>
+            <p>Guiar a la persona durante el registro y la activación de su wallet, indicándole qué paso sigue.</p>
+          </article>
+          <article class="card">
+            <div class="number">02 / PAGO</div>
+            <h3>Menos dudas al pagar</h3>
+            <p>Ayudar a completar pagos a contacto y mostrar claramente si el resultado está pendiente, fue exitoso o falló.</p>
+          </article>
+          <article class="card">
+            <div class="number">03 / CONFIANZA</div>
+            <h3>Una respuesta útil</h3>
+            <p>Dar una referencia e historial cuando corresponde, y orientar el siguiente paso cuando el pago no se confirma.</p>
+          </article>
         </div>
-        <p class="note" style="margin-top:20px">* Son metas del MVP documentadas, no resultados medidos ni garantizados por la implementación actual.</p>
+        <p class="note" style="margin-top:18px">La reducción de abandono y del tiempo de onboarding son objetivos del proyecto; no se presentan como resultados ya alcanzados.</p>
       </div>
-      <div class="footer"><span>Enfoque inicial: usuarios que pagan montos pequeños y comercios con QR</span><span>02 / 07</span></div>
+      <div class="footer"><span>Problema y propósito del producto</span><span>02 / 07</span></div>
     </section>
 
     <section class="slide" aria-label="Diapositiva 3: La solución">
-      <div class="topline"><span class="brand"><span class="brand-mark">W</span> Wallet MVP · Perú</span><span class="pill">02 · La solución</span></div>
+      <div class="topline"><span class="brand"><span class="brand-mark">WA</span> Wali · Perú</span><span class="pill">02 · La solución</span></div>
       <div>
         <p class="eyebrow">Un recorrido modular</p>
         <h2>Avance parcial en onboarding y pago a contacto.</h2>
@@ -357,7 +371,7 @@
     </section>
 
     <section class="slide" aria-label="Diapositiva 4: Tecnologías implementadas">
-      <div class="topline"><span class="brand"><span class="brand-mark">W</span> Wallet MVP · Perú</span><span class="pill">04 · Tecnologías</span></div>
+      <div class="topline"><span class="brand"><span class="brand-mark">WA</span> Wali · Perú</span><span class="pill">03 · Tecnologías</span></div>
       <div>
         <p class="eyebrow">Stack aplicada al proyecto</p>
         <h2>Tecnologías utilizadas en la solución.</h2>
@@ -384,7 +398,7 @@
     </section>
 
     <section class="slide" aria-label="Diapositiva 5: Avance parcial de W2">
-      <div class="topline"><span class="brand"><span class="brand-mark">W</span> Wallet MVP · Perú</span><span class="pill">05 · W2 · Avance parcial</span></div>
+      <div class="topline"><span class="brand"><span class="brand-mark">WA</span> Wali · Perú</span><span class="pill">04 · W2 · Avance parcial</span></div>
       <div>
         <p class="eyebrow">Pago a contacto</p>
         <h2>Flujos</h2>
@@ -414,7 +428,7 @@
     </section>
 
     <section class="slide" aria-label="Diapositiva 6: Arquitectura">
-      <div class="topline"><span class="brand"><span class="brand-mark">W</span> Wallet MVP · Perú</span><span class="pill">06 · Arquitectura aplicada</span></div>
+      <div class="topline"><span class="brand"><span class="brand-mark">WA</span> Wali · Perú</span><span class="pill">05 · Arquitectura aplicada</span></div>
       <div>
         <p class="eyebrow">Separación por responsabilidades</p>
         <h2>Una base sencilla para evolucionar por etapas.</h2>
@@ -434,7 +448,7 @@
     </section>
 
     <section class="slide" aria-label="Diapositiva 7: Calidad y seguridad">
-      <div class="topline"><span class="brand"><span class="brand-mark">W</span> Wallet MVP · Perú</span><span class="pill">07 · Buenas prácticas aplicadas</span></div>
+      <div class="topline"><span class="brand"><span class="brand-mark">WA</span> Wali · Perú</span><span class="pill">06 · Buenas prácticas aplicadas</span></div>
       <div>
         <p class="eyebrow">Confianza desde el diseño</p>
         <h2>Qué se cuidó en esta etapa.</h2>
@@ -454,7 +468,7 @@
 
   <nav class="controls" aria-label="Controles de la presentación">
     <button type="button" id="previous" aria-label="Diapositiva anterior" title="Anterior (←)">←</button>
-    <span id="counter" aria-live="polite">01 / 11</span>
+    <span id="counter" aria-live="polite">01 / 07</span>
     <button type="button" id="next" aria-label="Siguiente diapositiva" title="Siguiente (→)">→</button>
     <span aria-hidden="true">·</span>
     <span>Usa ← →, Inicio/Fin o imprime para exportar a PDF</span>
@@ -475,7 +489,7 @@
       });
       counter.textContent = `${String(current + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
       progress.style.width = `${((current + 1) / slides.length) * 100}%`;
-      document.title = `${String(current + 1).padStart(2, '0')} · Wallet MVP Perú`;
+      document.title = `${String(current + 1).padStart(2, '0')} · Wali`;
     }
 
     document.getElementById('previous').addEventListener('click', () => showSlide(current - 1));
