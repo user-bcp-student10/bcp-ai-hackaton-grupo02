@@ -1,0 +1,15 @@
+{
+  "success": {
+    "status": "200",
+    "return": {
+      "id": "kyc-001",
+      "wallet_id": "wallet-001",
+      "scenario": "APPROVED",
+      "status": "ACTIVE"
+    }
+  },
+  "error": {
+    "status": "500",
+    "message": "Internal Server Error"
+  }
+}

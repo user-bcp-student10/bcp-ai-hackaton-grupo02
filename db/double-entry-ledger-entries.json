@@ -1,0 +1,25 @@
+{
+  "success": {
+    "status": "200",
+    "return": [
+      {
+        "id": "ledger-001",
+        "operation": "funding-001",
+        "kind": "FUNDING",
+        "account": "wallet-demo",
+        "amount": 100000
+      },
+      {
+        "id": "ledger-002",
+        "operation": "payment-001",
+        "kind": "PAYMENT",
+        "account": "wallet-demo",
+        "amount": -1500
+      }
+    ]
+  },
+  "error": {
+    "status": "500",
+    "message": "Internal Server Error"
+  }
+}

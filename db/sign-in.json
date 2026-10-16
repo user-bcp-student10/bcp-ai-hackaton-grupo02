@@ -1,0 +1,16 @@
+{
+  "success": {
+    "status": "200",
+    "return": {
+      "access_token": "synthetic-access-token-001",
+      "token_type": "Bearer",
+      "expires_in": 3600,
+      "wallet_id": "wallet-demo",
+      "wallet_status": "ACTIVE"
+    }
+  },
+  "error": {
+    "status": "500",
+    "message": "Internal Server Error"
+  }
+}
