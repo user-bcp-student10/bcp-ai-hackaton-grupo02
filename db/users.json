@@ -81,6 +81,15 @@
       "email": "fffff@gmail.com",
       "passwordSalt": "44ef3cae7b9a7cee60f7b68c2e2a9af2",
       "passwordHash": "0d4e85b5bbab5d440af203d511aa38c3547c793795e7f8c9ae08a84856e9d6b162a419526be7ced53d50b5c9bed835d89dd39659d291cf4f73c52cd9ed565aad"
+    },
+    {
+      "account_id": "account-b13ac93f-a09b-4be0-819b-0f512fdc1e45",
+      "documentType": "DNI",
+      "documentDescription": "Documento ficticio de prueba",
+      "document": "98712341",
+      "email": "usuario21@gmail.com",
+      "passwordSalt": "e5d7f6823e0f4b173e6acc7769adc8e2",
+      "passwordHash": "1b36ec1aca183d3e261769de4213495997fa707a33edda12c5242371d62a5cdf00b9c12fb2c40f6064ad9e26ba7dd9ac4129d9c33f2070197d39ef099849bf81"
     }
   ]
 }
