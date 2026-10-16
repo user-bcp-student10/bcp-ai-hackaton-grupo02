@@ -28,7 +28,7 @@ const walletFixture = {
   error: { status: "500", message: "Internal Server Error" },
 };
 
-function createHarness(initialPayments = [], balance = 100_000) {
+function createHarness(initialPayments = [], balance = 100_000, corsOrigins) {
   const directory = mkdtempSync(path.join(os.tmpdir(), "w2-payment-test-"));
   temporaryDirectories.add(directory);
   const historyPath = path.join(directory, "payment-history.json");
@@ -52,7 +52,9 @@ function createHarness(initialPayments = [], balance = 100_000) {
   );
 
   const paymentStore = new PaymentStore({ historyPath, walletsPath });
-  const server = createServer(createApp({ paymentStore }));
+  const server = createServer(
+    createApp({ paymentStore, ...(corsOrigins ? { corsOrigins } : {}) }),
+  );
   return new Promise((resolve, reject) => {
     server.once("error", reject);
     server.listen(0, "127.0.0.1", () => {
@@ -433,6 +435,97 @@ describe("W2 payments API", () => {
         available: 50_000,
         currency: "PEN",
       });
+    } finally {
+      await harness.close();
+    }
+  });
+
+  it("permite el origen del frontend y no habilita credenciales", async () => {
+    const harness = await createHarness();
+    try {
+      const response = await harness.request("/health", {
+        headers: { Origin: "http://127.0.0.1:4200" },
+      });
+      assert.equal(response.status, 200);
+      assert.equal(
+        response.headers.get("access-control-allow-origin"),
+        "http://127.0.0.1:4200",
+      );
+      assert.equal(response.headers.get("access-control-allow-credentials"), null);
+      assert.match(response.headers.get("vary") ?? "", /Origin/u);
+    } finally {
+      await harness.close();
+    }
+  });
+
+  it("responde el preflight de creación con los métodos y headers W2 permitidos", async () => {
+    const harness = await createHarness();
+    try {
+      const response = await harness.request("/payments", {
+        method: "OPTIONS",
+        headers: {
+          Origin: "http://127.0.0.1:4200",
+          "Access-Control-Request-Method": "POST",
+          "Access-Control-Request-Headers": "content-type, idempotency-key",
+        },
+      });
+      assert.equal(response.status, 204);
+      assert.equal(response.headers.get("access-control-allow-origin"), "http://127.0.0.1:4200");
+      assert.equal(response.headers.get("access-control-allow-methods"), "GET, POST, OPTIONS");
+      assert.equal(response.headers.get("access-control-allow-headers"), "Content-Type, Idempotency-Key");
+      assert.equal(response.headers.get("access-control-allow-credentials"), null);
+    } finally {
+      await harness.close();
+    }
+  });
+
+  it("rechaza el preflight para controles internos y headers no autorizados", async () => {
+    const harness = await createHarness();
+    try {
+      const controlRequest = await harness.request("/control/events", {
+        method: "OPTIONS",
+        headers: {
+          Origin: "http://127.0.0.1:4200",
+          "Access-Control-Request-Method": "GET",
+        },
+      });
+      assert.equal(controlRequest.status, 403);
+
+      const authHeaderRequest = await harness.request("/payments", {
+        method: "OPTIONS",
+        headers: {
+          Origin: "http://127.0.0.1:4200",
+          "Access-Control-Request-Method": "POST",
+          "Access-Control-Request-Headers": "content-type, authorization",
+        },
+      });
+      assert.equal(authHeaderRequest.status, 403);
+
+      const controlRead = await harness.request("/control/events", {
+        headers: { Origin: "http://127.0.0.1:4200" },
+      });
+      assert.equal(controlRead.status, 403);
+      assert.equal((await controlRead.json()).error.code, "CORS_ROUTE_NOT_ALLOWED");
+    } finally {
+      await harness.close();
+    }
+  });
+
+  it("rechaza un origen externo antes de crear un pago", async () => {
+    const harness = await createHarness();
+    try {
+      const response = await harness.request("/payments", {
+        method: "POST",
+        body: paymentBody,
+        headers: {
+          Origin: "https://untrusted.example",
+          "Idempotency-Key": "cors-denied-001",
+        },
+      });
+      assert.equal(response.status, 403);
+      assert.equal((await response.json()).error.code, "CORS_ORIGIN_NOT_ALLOWED");
+      assert.equal(response.headers.get("access-control-allow-origin"), null);
+      assert.deepEqual(await (await harness.request("/payments")).json(), []);
     } finally {
       await harness.close();
     }

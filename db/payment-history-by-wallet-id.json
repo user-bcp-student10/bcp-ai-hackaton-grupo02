@@ -11,6 +11,16 @@
         "scenario": "APPROVED",
         "idem": "contact-payment-001",
         "fingerprint": "fp-synthetic-001"
+      },
+      {
+        "id": "payment-09c3479b-96f2-4b4d-a720-df24c3a39eea",
+        "wallet_id": "wallet-demo",
+        "recipient": "contact-demo",
+        "amount": 1500,
+        "status": "PENDING",
+        "scenario": "APPROVED",
+        "idem": "dfeb41cc-b809-4eef-bc92-9249565de2ee",
+        "fingerprint": "fp-628202741d450ccdec729efed381cd2ae725fc5e816627832294ef1dbaa0aa6f"
       }
     ]
   },
