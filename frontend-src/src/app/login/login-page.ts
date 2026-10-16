@@ -3,7 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
-import { LoginApi, LoginContractError, LoginResponse, WalletStatus } from './login-api';
+import { LoginApi, LoginContractError, LoginResponse } from './login-api';
 import { LoginSession } from './login-session';
 import { DOCUMENT_TYPES, DocumentType } from '../document-type';
 
@@ -27,12 +27,12 @@ export class LoginPage {
   protected readonly isSubmitting = signal(false);
   protected readonly submitted = signal(false);
   protected readonly errorMessage = signal('');
-  protected readonly activeWallet = signal<{ walletId: string } | null>(null);
+  protected readonly authenticatedAccount = signal<{ accountId: string } | null>(null);
 
   protected submit(): void {
     this.submitted.set(true);
     this.errorMessage.set('');
-    this.activeWallet.set(null);
+    this.authenticatedAccount.set(null);
 
     if (this.loginForm.invalid || this.isSubmitting()) {
       this.loginForm.markAllAsTouched();
@@ -68,28 +68,15 @@ export class LoginPage {
 
   protected logout(): void {
     this.session.clear();
-    this.activeWallet.set(null);
+    this.authenticatedAccount.set(null);
     this.loginForm.reset();
     this.submitted.set(false);
   }
 
   private handleResponse(response: LoginResponse): void {
     this.loginForm.controls.password.reset();
-    if (response.wallet_status !== 'ACTIVE') {
-      this.session.clear();
-      this.errorMessage.set(this.walletStatusMessage(response.wallet_status));
-      return;
-    }
-
     this.session.start(response);
-    this.activeWallet.set({ walletId: response.wallet_id });
-  }
-
-  private walletStatusMessage(status: WalletStatus): string {
-    if (status === 'PENDING') {
-      return 'No puedes continuar: la wallet está en estado PENDING y requiere aprobación.';
-    }
-    return 'No puedes continuar: la wallet está en estado REJECTED y no está disponible.';
+    this.authenticatedAccount.set({ accountId: response.account_id });
   }
 
   private safeErrorMessage(error: unknown): string {

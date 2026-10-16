@@ -22,6 +22,7 @@ const app = createApp({
   maxPayloadBytes: config.maxPayloadBytes,
   rateLimitMax: config.rateLimitMax,
   rateLimitWindowMs: config.rateLimitWindowMs,
+  corsOrigins: config.corsOrigins,
 });
 
 const server = app.listen(config.port, () => {

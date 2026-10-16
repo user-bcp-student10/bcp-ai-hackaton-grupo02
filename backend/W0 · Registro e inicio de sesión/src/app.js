@@ -2,6 +2,7 @@ import express from "express";
 import { authUnavailableError, validationError } from "./errors.js";
 import { createRateLimiter } from "./rate-limiter.js";
 import { validateLogin, validateSignup } from "./validation.js";
+import { createCorsMiddleware, DEFAULT_CORS_ORIGINS } from "./cors.js";
 
 function sendError(res, error) {
   const status = Number.isInteger(error?.status) ? error.status : 503;
@@ -20,6 +21,7 @@ export function createApp({
   rateLimitMax,
   rateLimitWindowMs,
   rateLimiterNow,
+  corsOrigins = DEFAULT_CORS_ORIGINS,
 }) {
   const app = express();
   const parseJson = express.json({ limit: maxPayloadBytes, strict: true });
@@ -30,6 +32,7 @@ export function createApp({
   };
 
   app.disable("x-powered-by");
+  app.use(createCorsMiddleware(corsOrigins));
   app.post("/auth/signup", createRateLimiter(rateLimiterOptions), parseJson, async (req, res) => {
     const input = validateSignup(req.body);
     const result = await authService.signup(input);

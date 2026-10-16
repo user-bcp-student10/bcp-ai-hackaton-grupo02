@@ -4,8 +4,6 @@ import { map, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { DocumentType } from '../document-type';
 
-export type WalletStatus = 'ACTIVE' | 'PENDING' | 'REJECTED';
-
 export interface LoginRequest {
   documentType: DocumentType;
   document: string;
@@ -16,8 +14,7 @@ export interface LoginResponse {
   access_token: string;
   token_type: 'Bearer';
   expires_in: number;
-  wallet_id: string;
-  wallet_status: WalletStatus;
+  account_id: string;
 }
 
 export class LoginContractError extends Error {
@@ -37,10 +34,6 @@ export class LoginApi {
       .pipe(
         map((response) => {
           const body = response.body as Partial<LoginResponse> | null;
-          const knownWalletStatus = ['ACTIVE', 'PENDING', 'REJECTED'].includes(
-            String(body?.wallet_status),
-          );
-
           if (
             response.status !== 200 ||
             !body ||
@@ -50,9 +43,8 @@ export class LoginApi {
             typeof body.expires_in !== 'number' ||
             !Number.isFinite(body.expires_in) ||
             body.expires_in <= 0 ||
-            typeof body.wallet_id !== 'string' ||
-            body.wallet_id.length === 0 ||
-            !knownWalletStatus
+            typeof body.account_id !== 'string' ||
+            body.account_id.length === 0
           ) {
             throw new LoginContractError();
           }
@@ -61,8 +53,7 @@ export class LoginApi {
             access_token: body.access_token,
             token_type: 'Bearer',
             expires_in: body.expires_in,
-            wallet_id: body.wallet_id,
-            wallet_status: body.wallet_status as WalletStatus,
+            account_id: body.account_id,
           };
         }),
       );

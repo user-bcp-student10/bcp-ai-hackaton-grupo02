@@ -84,7 +84,7 @@ Ejemplo:
 ```json
 {
   "documentType": "CE",
-  "document": "00000001",
+  "document": "000000001",
   "password": "test-password"
 }
 ```

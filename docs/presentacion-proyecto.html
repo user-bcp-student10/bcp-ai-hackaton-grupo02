@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#081b32">
+  <title>Wallet MVP Perú | Presentación del proyecto</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f5f8fc;
+      --muted: #afbed0;
+      --navy: #081b32;
+      --panel: #102844;
+      --panel-light: #173756;
+      --teal: #39d7bd;
+      --gold: #ffc85a;
+      --coral: #ff8a7a;
+      --line: rgba(208, 229, 246, .16);
+      font-family: "Aptos", "Segoe UI", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse at 12% 8%, rgba(57, 215, 189, .11), transparent 34rem),
+        radial-gradient(ellipse at 90% 90%, rgba(255, 200, 90, .08), transparent 30rem),
+        var(--navy);
+    }
+
+    button { font: inherit; }
+
+    .stage {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 28px 24px 88px;
+    }
+
+    .slide {
+      display: none;
+      position: relative;
+      width: min(100%, 1280px);
+      aspect-ratio: 16 / 9;
+      min-height: 600px;
+      overflow: hidden;
+      padding: clamp(36px, 5vw, 76px);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background:
+        linear-gradient(140deg, rgba(255,255,255,.025), transparent 45%),
+        linear-gradient(155deg, #0d2540 0%, #091c33 72%);
+      box-shadow: 0 28px 90px rgba(0, 0, 0, .32);
+    }
+
+    .slide.active { display: flex; flex-direction: column; }
+
+    .slide::after {
+      content: "";
+      position: absolute;
+      right: -125px;
+      bottom: -240px;
+      width: 450px;
+      height: 450px;
+      border: 1px solid rgba(57, 215, 189, .13);
+      border-radius: 50%;
+      box-shadow: 0 0 0 38px rgba(57, 215, 189, .025), 0 0 0 78px rgba(57, 215, 189, .02);
+      pointer-events: none;
+    }
+
+    .topline, .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .topline { margin-bottom: auto; }
+    .footer { margin-top: auto; padding-top: 24px; color: var(--muted); font-size: 13px; }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border: 1px solid rgba(57, 215, 189, .5);
+      border-radius: 11px;
+      color: var(--teal);
+      font-size: 12px;
+      letter-spacing: 0;
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      color: var(--teal);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .17em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { max-width: 900px; margin-bottom: 20px; font-size: clamp(44px, 6vw, 82px); line-height: .99; letter-spacing: -.045em; }
+    h2 { max-width: 930px; margin-bottom: 16px; font-size: clamp(34px, 4.2vw, 56px); line-height: 1.04; letter-spacing: -.035em; }
+    h3 { margin-bottom: 10px; font-size: 20px; }
+    p { color: var(--muted); line-height: 1.55; }
+    .lead { max-width: 760px; font-size: clamp(18px, 2vw, 24px); }
+    .accent { color: var(--teal); }
+    .gold { color: var(--gold); }
+    .coral { color: var(--coral); }
+
+    .cover-content { max-width: 900px; margin: auto 0; }
+    .cover-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 34px; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 13px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.035);
+      color: #dce8f3;
+      font-size: 13px;
+    }
+
+    .grid { display: grid; gap: 16px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .card {
+      position: relative;
+      z-index: 1;
+      padding: 22px 23px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(16, 40, 68, .78);
+    }
+    .card p:last-child { margin-bottom: 0; }
+    .card .number { margin-bottom: 14px; color: var(--teal); font-size: 13px; font-weight: 800; letter-spacing: .12em; }
+    .card strong { color: var(--ink); }
+    .compact p { font-size: 15px; }
+    .status-label {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .done { color: #9cf2df; background: rgba(57, 215, 189, .12); }
+    .defined { color: #ffe2a0; background: rgba(255, 200, 90, .12); }
+    .pending { color: #ffc1b7; background: rgba(255, 138, 122, .12); }
+
+    .metric {
+      padding: 23px;
+      border-left: 2px solid var(--teal);
+      background: linear-gradient(90deg, rgba(57, 215, 189, .09), transparent);
+    }
+    .metric b { display: block; margin-bottom: 8px; color: var(--gold); font-size: clamp(30px, 4vw, 47px); letter-spacing: -.04em; }
+    .metric span { color: var(--muted); font-size: 14px; }
+
+    .journey { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 22px 0; }
+    .step {
+      position: relative;
+      min-height: 145px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel);
+    }
+    .step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      z-index: 2;
+      top: 48%;
+      right: -16px;
+      color: var(--teal);
+      font-size: 22px;
+      font-weight: 800;
+    }
+    .step b { display: block; margin-bottom: 9px; color: var(--teal); }
+    .step span { color: var(--muted); font-size: 14px; line-height: 1.4; }
+
+    .architecture {
+      display: grid;
+      grid-template-columns: 1fr 58px 1fr 58px 1fr;
+      align-items: center;
+      gap: 8px;
+      margin: 26px 0;
+    }
+    .arch-box {
+      min-height: 146px;
+      display: grid;
+      place-content: center;
+      padding: 18px;
+      border: 1px solid rgba(57, 215, 189, .35);
+      border-radius: 16px;
+      background: rgba(16, 40, 68, .88);
+      text-align: center;
+    }
+    .arch-box b { margin-bottom: 7px; color: var(--ink); font-size: 19px; }
+    .arch-box span { color: var(--muted); font-size: 14px; line-height: 1.45; }
+    .arch-arrow { color: var(--teal); font-size: 28px; text-align: center; }
+    .note {
+      padding: 14px 17px;
+      border-left: 3px solid var(--gold);
+      border-radius: 0 10px 10px 0;
+      background: rgba(255, 200, 90, .08);
+      color: #e8d6ae;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    .list { display: grid; gap: 12px; padding: 0; list-style: none; }
+    .list li { display: flex; gap: 12px; color: var(--muted); line-height: 1.45; }
+    .list li::before { content: "●"; flex: 0 0 auto; color: var(--teal); font-size: 11px; padding-top: 4px; }
+
+    .controls {
+      position: fixed;
+      z-index: 5;
+      right: 24px;
+      bottom: 18px;
+      left: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .controls button {
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: var(--panel);
+      color: var(--ink);
+      cursor: pointer;
+    }
+    .controls button:hover { border-color: var(--teal); color: var(--teal); }
+    .controls button:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+    #counter { min-width: 64px; text-align: center; font-variant-numeric: tabular-nums; }
+    .progress { position: fixed; z-index: 6; right: 0; bottom: 0; left: 0; height: 3px; background: rgba(255,255,255,.08); }
+    .progress span { display: block; width: 0; height: 100%; background: var(--teal); transition: width .2s ease; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    @media (max-width: 800px) {
+      .stage { padding: 12px 10px 78px; }
+      .slide { min-height: 0; aspect-ratio: auto; min-height: calc(100vh - 100px); padding: 30px 24px; border-radius: 18px; }
+      .grid.three, .grid.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .journey { grid-template-columns: repeat(2, 1fr); }
+      .step:not(:last-child)::after { display: none; }
+      .architecture { grid-template-columns: 1fr; }
+      .arch-arrow { transform: rotate(90deg); }
+    }
+
+    @media (max-width: 520px) {
+      .grid.two, .grid.three, .grid.four, .journey { grid-template-columns: 1fr; }
+      .footer { font-size: 11px; }
+      .slide { padding: 25px 19px; }
+    }
+
+    @media print {
+      @page { size: 13.333in 7.5in; margin: 0; }
+      :root { color-scheme: dark; }
+      body { background: var(--navy); print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .stage { display: block; min-height: 0; padding: 0; }
+      .slide, .slide.active {
+        display: flex !important;
+        width: 13.333in;
+        height: 7.5in;
+        min-height: 0;
+        aspect-ratio: auto;
+        padding: .62in .78in;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        break-after: page;
+        page-break-after: always;
+      }
+      .slide:last-child { break-after: auto; page-break-after: auto; }
+      .controls, .progress { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage" id="presentation" aria-label="Presentación del proyecto Wallet MVP Perú">
+    <section class="slide active" aria-label="Diapositiva 1: Portada">
+      <div class="topline">
+        <span class="brand"><span class="brand-mark">W</span> BCP AI Hackathon · Grupo 02</span>
+        <span class="pill">Avance parcial en W1 + W2</span>
+      </div>
+      <div class="cover-content">
+        <p class="eyebrow">Wallet MVP · Perú</p>
+        <h1>Pagos cotidianos,<br><span class="accent">con confianza</span></h1>
+        <p class="lead">Una experiencia de wallet enfocada en simplificar el registro, orientar al usuario y dar claridad sobre el resultado de sus pagos.</p>
+        <div class="cover-meta">
+          <span class="pill">Angular · Frontend</span>
+          <span class="pill">Node.js · APIs</span>
+          <span class="pill">Prototipo con escenarios simulados</span>
+        </div>
+      </div>
+      <div class="footer"><span>Qué resolvemos · qué aplicamos · qué sigue</span><span>01 / 07</span></div>
+    </section>
+
+    <section class="slide" aria-label="Diapositiva 2: El reto">
+      <div class="topline"><span class="brand"><span class="brand-mark">W</span> Wallet MVP · Perú</span><span class="pill">01 · El reto</span></div>
+      <div>
+        <p class="eyebrow">La oportunidad</p>
+        <h2>Menos fricción en el checkout.<br><span class="accent">Más claridad para cada usuario.</span></h2>
+        <p class="lead">El proyecto aborda dos momentos sensibles: empezar a usar una wallet y saber con certeza qué pasó con un pago.</p>
+        <div class="grid four" style="margin-top:24px">
+          <div class="metric"><b>30% → 8%</b><span>Objetivo de reducción de abandono en checkout*</span></div>
+          <div class="metric"><b>8 → 3 min</b><span>Objetivo de duración del onboarding*</span></div>
+          <div class="metric"><b>1–2 mil</b><span>MAU objetivo en los primeros meses*</span></div>
+          <div class="metric"><b>PEN 10</b><span>Objetivo de CAC por nuevo usuario*</span></div>
+        </div>
+        <p class="note" style="margin-top:20px">* Son metas del MVP documentadas, no resultados medidos ni garantizados por la implementación actual.</p>
+      </div>
+      <div class="footer"><span>Enfoque inicial: usuarios que pagan montos pequeños y comercios con QR</span><span>02 / 07</span></div>
+    </section>
+
+    <section class="slide" aria-label="Diapositiva 3: La solución">
+      <div class="topline"><span class="brand"><span class="brand-mark">W</span> Wallet MVP · Perú</span><span class="pill">02 · La solución</span></div>
+      <div>
+        <p class="eyebrow">Un recorrido modular</p>
+        <h2>Avance parcial en onboarding y pago a contacto.</h2>
+        <div class="journey">
+          <div class="step"><b>W1 · Registro</b><span>Hay avances en el registro y creación de wallet de prueba.</span></div>
+          <div class="step"><b>W1 · Activación</b><span>Flujo aún incompleto; falta finalizar la activación de la wallet.</span></div>
+          <div class="step"><b>W2 · Pago</b><span>Hay avances en el flujo de pago a contacto con escenarios de prueba.</span></div>
+          <div class="step"><b>W2 · Confirmación</b><span>Flujo aún incompleto; falta finalizar la confirmación del resultado.</span></div>
+        </div>
+        <div class="grid three compact">
+          <article class="card"><h3>Avance parcial</h3><p>W1: registro iniciado; activación pendiente de completar.</p></article>
+          <article class="card"><h3>Avance parcial</h3><p>W2: pago a contacto iniciado; confirmación pendiente de completar.</p></article>
+          <article class="card"><h3>No realizado</h3><p>W0 y W3–W6 no se han implementado.</p></article>
+        </div>
+      </div>
+      <div class="footer"><span>Alcance funcional documentado para el MVP</span><span>03 / 07</span></div>
+    </section>
+
+    <section class="slide" aria-label="Diapositiva 4: Tecnologías implementadas">
+      <div class="topline"><span class="brand"><span class="brand-mark">W</span> Wallet MVP · Perú</span><span class="pill">04 · Tecnologías</span></div>
+      <div>
+        <p class="eyebrow">Stack aplicada al proyecto</p>
+        <h2>Tecnologías utilizadas en la solución.</h2>
+        <div class="grid two">
+          <article class="card">
+            <h3>Frontend y cliente</h3>
+            <ul class="list">
+              <li>Angular 22 para construir la aplicación frontend.</li>
+              <li>TypeScript 6 para el tipado y la lógica cliente.</li>
+              <li>RxJS 7.8 para operaciones asíncronas.</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Backend y pruebas</h3>
+            <ul class="list">
+              <li>Node.js 26.9 como runtime de backend.</li>
+              <li>node:http para la API local de W1.</li>
+              <li>node:test para las pruebas automatizadas de backend.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+      <div class="footer"><span>Tecnologías observadas en el código y manifiestos del proyecto</span><span>04 / 07</span></div>
+    </section>
+
+    <section class="slide" aria-label="Diapositiva 5: Avance parcial de W2">
+      <div class="topline"><span class="brand"><span class="brand-mark">W</span> Wallet MVP · Perú</span><span class="pill">05 · W2 · Avance parcial</span></div>
+      <div>
+        <p class="eyebrow">Pago a contacto</p>
+        <h2>Flujos</h2>
+        <div class="grid two">
+          <article class="card">
+            <h3>Flujo funcional</h3>
+            <ul class="list">
+              <li>Hay avances en la creación del pago a contacto.</li>
+              <li>El flujo usa escenarios de prueba para simular respuestas.</li>
+              <li>La confirmación terminal del resultado todavía no se ha finalizado.</li>
+              <li>Falta completar y validar el recorrido de confirmación de punta a punta.</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Protecciones del flujo</h3>
+            <ul class="list">
+              <li>No presentar un intento de pago como exitoso sin confirmación definitiva.</li>
+              <li>Validar estados pendientes y resultados finales en las pruebas.</li>
+              <li>Conectar la consulta del pago con la experiencia que recibe el usuario.</li>
+              <li>Los pagos QR y las historias W3–W6 no se han realizado.</li>
+            </ul>
+          </article>
+        </div>
+        <p class="note" style="margin-top:18px">W2 está en progreso: la confirmación no está terminada. Los escenarios actuales no implican conexión con rieles de pago o proveedores financieros reales.</p>
+      </div>
+      <div class="footer"><span>W2 está en progreso; la confirmación no está terminada</span><span>05 / 07</span></div>
+    </section>
+
+    <section class="slide" aria-label="Diapositiva 6: Arquitectura">
+      <div class="topline"><span class="brand"><span class="brand-mark">W</span> Wallet MVP · Perú</span><span class="pill">06 · Arquitectura aplicada</span></div>
+      <div>
+        <p class="eyebrow">Separación por responsabilidades</p>
+        <h2>Una base sencilla para evolucionar por etapas.</h2>
+        <div class="architecture">
+          <div class="arch-box"><b>Frontend Angular</b><span>Angular 22<br>TypeScript · RxJS<br>Componentes y formularios</span></div>
+          <div class="arch-arrow" aria-hidden="true">→</div>
+          <div class="arch-box"><b>Servicios Node.js</b><span>W1 · API local<br>W2 · Pago a contacto<br>HTTP y escenarios de prueba</span></div>
+          <div class="arch-arrow" aria-hidden="true">→</div>
+          <div class="arch-box"><b>Datos de prueba</b><span>Fixtures JSON<br>Escenarios simulados<br>Estado local en memoria</span></div>
+        </div>
+        <div class="grid two compact">
+          <article class="card"><h3>Separación de responsabilidades</h3><p>El frontend Angular consume servicios HTTP Node.js; las APIs y los datos de prueba tienen límites claros.</p></article>
+          <article class="card"><h3>Escenarios reproducibles</h3><p>Fixtures y escenarios simulados permiten probar W1 y W2 sin depender de proveedores reales.</p></article>
+        </div>
+      </div>
+      <div class="footer"><span>Arquitectura de prototipo; integraciones externas aún no habilitadas</span><span>06 / 07</span></div>
+    </section>
+
+    <section class="slide" aria-label="Diapositiva 7: Calidad y seguridad">
+      <div class="topline"><span class="brand"><span class="brand-mark">W</span> Wallet MVP · Perú</span><span class="pill">07 · Buenas prácticas aplicadas</span></div>
+      <div>
+        <p class="eyebrow">Confianza desde el diseño</p>
+        <h2>Qué se cuidó en esta etapa.</h2>
+        <div class="grid three">
+          <article class="card"><div class="number">01 / CONTRATOS</div><h3>Respuestas explícitas</h3><p>Estados y errores con formas documentadas para evitar respuestas ambiguas entre componentes.</p></article>
+          <article class="card"><div class="number">02 / TECNOLOGÍA</div><h3>Stack tipada</h3><p>Angular y TypeScript en la interfaz; Node.js para los servicios implementados.</p></article>
+          <article class="card"><div class="number">03 / VALIDACIÓN</div><h3>Estados claros</h3><p>W1 representa aprobación, rechazo, revisión manual e indisponibilidad de KYC simulado.</p></article>
+          <article class="card"><div class="number">04 / PRUEBAS</div><h3>Verificación automatizada</h3><p>Runner nativo de Node.js para validar los servicios y escenarios de prueba.</p></article>
+          <article class="card"><div class="number">05 / DATOS</div><h3>Mocks reproducibles</h3><p>Fixtures JSON permiten ejecutar escenarios sin proveedores externos.</p></article>
+          <article class="card"><div class="number">06 / ALCANCE</div><h3>Avance acotado</h3>          <p>W1 y W2 están en progreso; W0 y W3–W6 no se han realizado.</p></article>
+        </div>
+        <p class="note" style="margin-top:17px">La existencia de pruebas no significa que toda la experiencia integrada o los objetivos de negocio ya hayan sido validados.</p>
+      </div>
+      <div class="footer"><span>Seguridad y calidad dentro del alcance de prototipo</span><span>07 / 07</span></div>
+    </section>
+  </main>
+
+  <nav class="controls" aria-label="Controles de la presentación">
+    <button type="button" id="previous" aria-label="Diapositiva anterior" title="Anterior (←)">←</button>
+    <span id="counter" aria-live="polite">01 / 11</span>
+    <button type="button" id="next" aria-label="Siguiente diapositiva" title="Siguiente (→)">→</button>
+    <span aria-hidden="true">·</span>
+    <span>Usa ← →, Inicio/Fin o imprime para exportar a PDF</span>
+  </nav>
+  <div class="progress" aria-hidden="true"><span id="progress"></span></div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const counter = document.getElementById('counter');
+    const progress = document.getElementById('progress');
+    let current = 0;
+
+    function showSlide(index) {
+      current = Math.max(0, Math.min(index, slides.length - 1));
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === current);
+        slide.setAttribute('aria-hidden', String(i !== current));
+      });
+      counter.textContent = `${String(current + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+      progress.style.width = `${((current + 1) / slides.length) * 100}%`;
+      document.title = `${String(current + 1).padStart(2, '0')} · Wallet MVP Perú`;
+    }
+
+    document.getElementById('previous').addEventListener('click', () => showSlide(current - 1));
+    document.getElementById('next').addEventListener('click', () => showSlide(current + 1));
+    document.addEventListener('keydown', (event) => {
+      if (event.altKey || event.ctrlKey || event.metaKey) return;
+      if (event.key === 'ArrowLeft' || event.key === 'PageUp') showSlide(current - 1);
+      if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') {
+        event.preventDefault();
+        showSlide(current + 1);
+      }
+      if (event.key === 'Home') showSlide(0);
+      if (event.key === 'End') showSlide(slides.length - 1);
+    });
+    showSlide(0);
+  </script>
+</body>
+</html>
