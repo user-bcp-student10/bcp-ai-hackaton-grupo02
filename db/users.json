@@ -1,0 +1,24 @@
+{
+  "fixtures": [
+    {
+      "account_id": "account-test-001",
+      "status": "REGISTERED"
+    },
+    {
+      "account_id": "account-test-002",
+      "status": "REGISTERED"
+    },
+    {
+      "account_id": "account-test-003",
+      "status": "REGISTERED"
+    },
+    {
+      "account_id": "account-test-004",
+      "status": "REGISTERED"
+    },
+    {
+      "account_id": "account-test-005",
+      "status": "REGISTERED"
+    }
+  ]
+}
