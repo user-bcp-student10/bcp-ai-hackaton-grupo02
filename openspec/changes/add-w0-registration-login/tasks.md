@@ -9,7 +9,7 @@ GitHub Issues está deshabilitado en este repositorio y el cambio no tiene un id
 ### 1. Caracterización previa al cambio funcional
 
 - [ ] Identificar la implementación de servicio y el runner de pruebas disponibles; ejecutar y registrar la línea base de los contratos W1 que se conservarán. No cambiar comportamiento funcional durante esta tarea.
-- [ ] Añadir pruebas de contrato para solicitudes válidas e inválidas de signup y login: campos obligatorios y tipos, `documentType=TEST`, prefijo `TEST-`, formato de correo en signup, códigos `400 VALIDATION_ERROR` y formas de respuesta aprobadas.
+- [ ] Añadir pruebas de contrato para solicitudes válidas e inválidas de signup y login: campos obligatorios y tipos, `documentType` permitido (`DNI` o `CE`), `document` string, formato de correo en signup, códigos `400 VALIDATION_ERROR` y formas de respuesta aprobadas.
 - [ ] Añadir pruebas de caracterización de signup que comprueben `201` con `account_id` y `REGISTERED`, sin token ni wallet; cubrir duplicidad de documento y de correo, incluidas altas concurrentes.
 - [ ] Añadir pruebas de contrato de login para credenciales incorrectas (mismo `401 INVALID_CREDENTIALS` para documento inexistente y contraseña incorrecta) y comprobar que ninguna respuesta ni error exponga la contraseña.
 - [ ] Caracterizar la integración W1 y añadir pruebas que verifiquen la asociación inequívoca `account_id`–`wallet_id`, la lectura de la wallet correcta y los estados `ACTIVE`, `PENDING` y `REJECTED`; comprobar que login no cambie el estado ni los permisos de pago.
