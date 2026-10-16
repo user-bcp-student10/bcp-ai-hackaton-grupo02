@@ -1,0 +1,142 @@
+<div class="payment-shell">
+  <header class="payment-topbar">
+    <a class="brand" routerLink="/" aria-label="Volver al inicio">
+      <span class="brand-mark" aria-hidden="true">W2</span>
+      <span>Pagos de prueba</span>
+    </a>
+    <span class="environment-tag"><span aria-hidden="true"></span> ENTORNO DE LABORATORIO</span>
+  </header>
+
+  <main class="payment-layout">
+    <section class="payment-intro" aria-labelledby="payment-title">
+      <p class="eyebrow">PAGO DE BAJO MONTO</p>
+      <h1 id="payment-title">Un paso claro antes de pagar.</h1>
+      <p class="intro-copy">Revisa el destino y el importe. El resultado puede tardar; un pago pendiente no es todavía un pago exitoso.</p>
+      <div class="limit-note">
+        <span class="limit-icon" aria-hidden="true">S/</span>
+        <p><strong>Tope de prueba: S/ 2,000.00</strong><br />Los montos se envían en céntimos de PEN.</p>
+      </div>
+      <a class="back-link" routerLink="/login">Volver al acceso</a>
+    </section>
+
+    <section class="payment-panel" aria-labelledby="form-title">
+      @if (stage() === 'editing') {
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">NUEVO PAGO</p>
+            <h2 id="form-title">Elige destino e importe</h2>
+          </div>
+          <span class="step-tag">W2 / 01</span>
+        </div>
+
+        <form [formGroup]="paymentForm" (ngSubmit)="reviewPayment()" novalidate>
+          <div class="field-group">
+            <label for="recipient">Destinatario</label>
+            <select id="recipient" formControlName="recipient">
+              <option value="contact-demo">Contacto de prueba</option>
+              <option value="merchant-demo">Comercio de prueba</option>
+            </select>
+            <p class="field-hint">El destinatario es externo y no acredita otra wallet local.</p>
+          </div>
+
+          <div class="field-group">
+            <label for="amountPen">Monto (PEN)</label>
+            <div class="amount-input">
+              <span aria-hidden="true">S/</span>
+              <input
+                id="amountPen"
+                type="number"
+                min="0.01"
+                max="2000"
+                step="0.01"
+                inputmode="decimal"
+                formControlName="amountPen"
+                [attr.aria-invalid]="isFieldInvalid()"
+                [attr.aria-describedby]="isFieldInvalid() ? 'amount-help amount-error' : 'amount-help'"
+              />
+            </div>
+            <p id="amount-help" class="field-hint">Mínimo S/ 0.01 · máximo S/ 2,000.00</p>
+            @if (isFieldInvalid()) {
+              <p id="amount-error" class="field-error">{{ amountError }}</p>
+            }
+          </div>
+
+          <button class="primary-button" type="submit">Revisar pago <span aria-hidden="true">→</span></button>
+        </form>
+      } @else if (stage() === 'review') {
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">CONFIRMA LOS DATOS</p>
+            <h2 id="form-title">Revisa antes de enviar</h2>
+          </div>
+          <span class="step-tag">W2 / 02</span>
+        </div>
+        <dl class="payment-summary">
+          <div><dt>Wallet</dt><dd>{{ walletId }}</dd></div>
+          <div><dt>Destinatario</dt><dd>{{ recipientLabel(paymentForm.controls.recipient.value) }}</dd></div>
+          <div><dt>Monto</dt><dd class="summary-amount">S/ {{ paymentForm.controls.amountPen.value | number: '1.2-2' }}</dd></div>
+          <div><dt>Moneda</dt><dd>PEN</dd></div>
+        </dl>
+        <div class="review-note" role="note">El pago puede quedar pendiente hasta recibir confirmación. No vuelvas a enviarlo mientras se verifica.</div>
+        <div class="action-row">
+          <button class="secondary-button" type="button" (click)="editPayment()">Editar</button>
+          <button class="primary-button" type="button" (click)="confirmPayment()">Confirmar pago</button>
+        </div>
+      } @else if (stage() === 'submitting' || stage() === 'resolving') {
+        <div class="state-panel" role="status" aria-live="polite">
+          <span class="state-spinner" aria-hidden="true"></span>
+          <p class="eyebrow">{{ stage() === 'submitting' ? 'ENVIANDO' : 'CONSULTANDO' }}</p>
+          <h2 id="form-title">{{ stage() === 'submitting' ? 'Registrando tu pago' : 'Verificando el resultado' }}</h2>
+          <p>{{ stage() === 'submitting' ? 'Conserva esta pantalla mientras recibimos la respuesta.' : 'Consultamos el mismo pago; no se creará otro cobro.' }}</p>
+        </div>
+      } @else if (stage() === 'pending') {
+        <div class="state-panel" role="status" aria-live="polite">
+          <span class="state-symbol pending-symbol" aria-hidden="true">…</span>
+          <p class="eyebrow">CONFIRMACIÓN PENDIENTE</p>
+          <h2 id="form-title">Tu pago sigue en proceso</h2>
+          <p>{{ message() }}</p>
+          <dl class="payment-reference"><dt>Referencia</dt><dd>{{ paymentId() }}</dd></dl>
+          <button class="primary-button" type="button" (click)="checkPendingPayment()">Consultar estado</button>
+        </div>
+      } @else if (stage() === 'uncertain') {
+        <div class="state-panel" role="alert" aria-live="assertive">
+          <span class="state-symbol uncertain-symbol" aria-hidden="true">?</span>
+          <p class="eyebrow">RESULTADO SIN CONFIRMAR</p>
+          <h2 id="form-title">No crees otro pago todavía</h2>
+          <p>{{ message() }}</p>
+          @if (paymentId()) {
+            <dl class="payment-reference"><dt>Referencia</dt><dd>{{ paymentId() }}</dd></dl>
+          }
+          <button class="primary-button" type="button" (click)="resolveUncertainPayment()">Volver a verificar</button>
+        </div>
+      } @else if (stage() === 'succeeded') {
+        <div class="state-panel" role="status" aria-live="polite">
+          <span class="state-symbol success-symbol" aria-hidden="true">✓</span>
+          <p class="eyebrow">PAGO COMPLETADO</p>
+          <h2 id="form-title">Pago exitoso</h2>
+          <p>{{ message() }}</p>
+          <dl class="payment-reference"><dt>Referencia</dt><dd>{{ paymentId() }}</dd><dt>Estado</dt><dd>SUCCEEDED</dd></dl>
+          @if (receipt(); as proof) {
+            <dl class="receipt"><dt>Comprobante</dt><dd>{{ proof.receiptId }}</dd><dt>Importe</dt><dd>{{ proof.amountCents | number: '1.0-0' }} céntimos PEN</dd></dl>
+          } @else {
+            <button class="secondary-button" type="button" [disabled]="receiptBusy()" (click)="loadReceipt()">
+              {{ receiptBusy() ? 'Consultando…' : 'Consultar comprobante' }}
+            </button>
+          }
+          <button class="primary-button" type="button" (click)="startAnotherPayment()">Crear otro pago</button>
+        </div>
+      } @else {
+        <div class="state-panel" [attr.role]="stage() === 'expired' ? 'status' : 'alert'" aria-live="polite">
+          <span class="state-symbol failure-symbol" aria-hidden="true">!</span>
+          <p class="eyebrow">{{ stage() === 'expired' ? 'PAGO EXPIRADO' : 'PAGO NO COMPLETADO' }}</p>
+          <h2 id="form-title">{{ stage() === 'expired' ? 'El intento expiró' : 'No se completó el pago' }}</h2>
+          <p>{{ message() }}</p>
+          @if (paymentId()) {
+            <dl class="payment-reference"><dt>Referencia</dt><dd>{{ paymentId() }}</dd></dl>
+          }
+          <button class="primary-button" type="button" (click)="startAnotherPayment()">Intentar otro pago</button>
+        </div>
+      }
+    </section>
+  </main>
+</div>
