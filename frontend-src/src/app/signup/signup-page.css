@@ -6,8 +6,9 @@
 .page-shell {
   min-height: 100vh;
   background-color: var(--paper);
-  background-image: radial-gradient(circle, rgb(24 74 57 / 9%) 1px, transparent 1px);
-  background-size: 22px 22px;
+  background-image: linear-gradient(rgb(36 88 198 / 5%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(36 88 198 / 5%) 1px, transparent 1px);
+  background-size: 28px 28px;
 }
 
 .topbar {
@@ -17,15 +18,15 @@
   justify-content: space-between;
   gap: 1rem;
   padding: 0 clamp(1.25rem, 5vw, 5rem);
-  border-bottom: 1px solid var(--line);
-  background: rgb(249 250 246 / 92%);
+  border-bottom: 1px solid #31405a;
+  background: var(--ink);
 }
 
 .brand {
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
-  color: var(--ink);
+  color: var(--surface);
   font-size: 0.94rem;
   font-weight: 750;
   text-decoration: none;
@@ -36,9 +37,9 @@
   width: 38px;
   aspect-ratio: 1;
   place-items: center;
-  border-radius: 11px;
-  background: var(--forest);
-  color: white;
+  border-radius: 4px;
+  background: var(--lime);
+  color: var(--ink);
   font-size: 0.78rem;
   font-weight: 800;
 }
@@ -47,7 +48,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--muted);
+  color: #d6dfed;
   font-size: 0.68rem;
   font-weight: 800;
 }
@@ -57,7 +58,7 @@
   aspect-ratio: 1;
   border-radius: 50%;
   background: var(--lime);
-  box-shadow: 0 0 0 3px rgb(150 177 80 / 18%);
+  box-shadow: 0 0 0 3px rgb(216 239 87 / 20%);
 }
 
 .signup-layout {
@@ -94,7 +95,7 @@ h1 {
   margin-bottom: 1.25rem;
   color: var(--ink);
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(2.65rem, 5vw, 4.25rem);
+  font-size: 3.75rem;
   font-weight: 500;
   line-height: 1.03;
 }
@@ -144,11 +145,11 @@ code {
 .form-panel {
   width: 100%;
   padding: clamp(1.4rem, 3vw, 2.15rem);
-  border: 1px solid var(--line);
-  border-top: 4px solid var(--forest);
-  border-radius: 8px;
+  border: 2px solid var(--ink);
+  border-top: 8px solid var(--coral);
+  border-radius: 4px;
   background: var(--surface);
-  box-shadow: 0 22px 60px rgb(26 51 39 / 9%);
+  box-shadow: 7px 7px 0 var(--ink);
 }
 
 .panel-heading {
@@ -182,16 +183,16 @@ h2 {
   gap: 0.4rem;
   margin-bottom: 1.35rem;
   padding: 0.75rem 0.9rem;
-  border: 1px solid #dce5dc;
-  border-radius: 6px;
-  background: #f1f5ef;
+  border: 1px solid #c6d1e0;
+  border-radius: 4px;
+  background: #f0f3fa;
 }
 
 .document-type select {
   min-height: 42px;
   padding: 0.55rem 0.7rem;
-  border: 1px solid #bcc8bd;
-  border-radius: 5px;
+  border: 1px solid #aebbd0;
+  border-radius: 3px;
   background: white;
   color: var(--ink);
   font: inherit;
@@ -217,8 +218,8 @@ input {
   width: 100%;
   min-height: 48px;
   padding: 0.7rem 0.8rem;
-  border: 1px solid #bcc8bd;
-  border-radius: 5px;
+  border: 1px solid #aebbd0;
+  border-radius: 3px;
   background: white;
   color: var(--ink);
   font: inherit;

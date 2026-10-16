@@ -1,4 +1,6 @@
 export const environment = {
-  signupEndpoint: 'https://signup.free.beeceptor.com/signup',
-  loginEndpoint: 'https://signup.free.beeceptor.com/login',
+  signupEndpoint: 'http://localhost:3000/auth/signup',
+  loginEndpoint: 'http://localhost:3000/auth/login',
+  w2ApiBaseUrl: 'http://localhost:3002',
+  w2WalletId: 'wallet-demo',
 };

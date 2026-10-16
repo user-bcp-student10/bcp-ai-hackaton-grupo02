@@ -34,7 +34,7 @@ export class SignupApi {
         map((response) => {
           const body = response.body as Partial<SignupResponse> | null;
           if (
-            response.status !== 200 ||
+            response.status !== 201 ||
             !body ||
             typeof body.account_id !== 'string' ||
             body.account_id.length === 0 ||

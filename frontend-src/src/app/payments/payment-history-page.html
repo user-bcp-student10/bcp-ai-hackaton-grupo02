@@ -1,0 +1,98 @@
+<div class="history-shell">
+  <header class="history-topbar">
+    <a class="brand" routerLink="/payments/new" aria-label="Volver a pagos">
+      <span class="brand-mark" aria-hidden="true">W2</span>
+      <span>Pagos de prueba</span>
+    </a>
+    <span class="environment-tag"><span aria-hidden="true"></span> ENTORNO DE LABORATORIO</span>
+  </header>
+
+  <main class="history-layout">
+    <section class="history-heading" aria-labelledby="history-title">
+      <div>
+        <p class="eyebrow">ACTIVIDAD DE LA WALLET</p>
+        <h1 id="history-title">Historial de pagos</h1>
+        <p class="intro-copy">Operaciones registradas para esta wallet de prueba.</p>
+      </div>
+      <div class="heading-actions">
+        <button class="refresh-button" type="button" [disabled]="isLoading()" (click)="loadHistory()" aria-label="Actualizar historial" title="Actualizar historial">
+          <span aria-hidden="true">↻</span>
+        </button>
+        <a class="new-payment-link" routerLink="/payments/new">Nuevo pago</a>
+      </div>
+    </section>
+
+    <section class="history-panel" aria-labelledby="history-list-title">
+      <div class="panel-header">
+        <div>
+          <p class="eyebrow">CUENTA</p>
+          <h2 id="history-list-title">{{ walletId }}</h2>
+        </div>
+        <span class="count-label">{{ payments().length }} operaciones</span>
+      </div>
+
+      @if (errorMessage(); as message) {
+        <div class="error-state" role="alert">
+          <p>{{ message }}</p>
+          <button class="text-button" type="button" (click)="loadHistory()">Reintentar consulta</button>
+        </div>
+      } @else if (isLoading()) {
+        <div class="loading-state" role="status" aria-live="polite">
+          <span class="loading-mark" aria-hidden="true"></span>
+          <p>Consultando los pagos…</p>
+        </div>
+      } @else if (payments().length === 0) {
+        <div class="empty-state" role="status">
+          <span class="empty-mark" aria-hidden="true">—</span>
+          <h3>Aún no hay pagos</h3>
+          <p>Las operaciones de esta wallet aparecerán aquí.</p>
+          <a class="new-payment-link" routerLink="/payments/new">Crear un pago</a>
+        </div>
+      } @else {
+        <div class="table-scroll">
+          <table>
+            <caption class="visually-hidden">Historial de pagos para {{ walletId }}</caption>
+            <thead>
+              <tr>
+                <th scope="col">Referencia</th>
+                <th scope="col">Destino</th>
+                <th scope="col">Importe</th>
+                <th scope="col">Estado</th>
+                <th scope="col"><span class="visually-hidden">Acciones</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (payment of payments(); track payment.id) {
+                <tr>
+                  <td data-label="Referencia"><span class="payment-id">{{ payment.id }}</span></td>
+                  <td data-label="Destino">{{ payment.recipient === 'contact-demo' ? 'Contacto de prueba' : 'Comercio de prueba' }}</td>
+                  <td data-label="Importe" class="amount-cell">S/ {{ payment.amount / 100 | number: '1.2-2' }}</td>
+                  <td data-label="Estado"><span class="status-pill" [class]="statusClass(payment.status)">{{ statusLabel(payment.status) }}</span></td>
+                  <td data-label="Acciones">
+                    @if (canLoadReceipt(payment.status)) {
+                      <button class="text-button" type="button" [disabled]="receiptPaymentId() === payment.id" (click)="loadReceipt(payment)">
+                        {{ receiptPaymentId() === payment.id ? 'Consultando…' : 'Comprobante' }}
+                      </button>
+                    } @else {
+                      <span class="muted-action">No disponible</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      @if (receipt(); as proof) {
+        <aside class="receipt-panel" aria-live="polite">
+          <div>
+            <p class="eyebrow">COMPROBANTE</p>
+            <h3>{{ proof.receiptId }}</h3>
+          </div>
+          <p>S/ {{ proof.amountCents / 100 | number: '1.2-2' }} · {{ proof.recipient === 'contact-demo' ? 'Contacto de prueba' : 'Comercio de prueba' }}</p>
+        </aside>
+      }
+    </section>
+  </main>
+</div>

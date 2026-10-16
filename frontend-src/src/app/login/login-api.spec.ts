@@ -18,8 +18,7 @@ describe('LoginApi', () => {
     access_token: 'fake-access-token',
     token_type: 'Bearer',
     expires_in: 3600,
-    wallet_id: 'wallet-001',
-    wallet_status: 'ACTIVE',
+    account_id: 'account-001',
   };
 
   beforeEach(() => {
@@ -32,7 +31,7 @@ describe('LoginApi', () => {
 
   afterEach(() => http.verify());
 
-  it('posts the approved DNI login body and accepts an HTTP 200 ACTIVE wallet', () => {
+  it('posts the approved DNI login body and accepts the W0 account response without wallet fields', () => {
     let response: unknown;
     api.login(requestBody).subscribe((value) => (response = value));
 
@@ -54,13 +53,4 @@ describe('LoginApi', () => {
     expect(receivedError).toBeInstanceOf(LoginContractError);
   });
 
-  it('preserves valid W0 wallet states for the UI to interpret', () => {
-    let response: unknown;
-    api.login(requestBody).subscribe((value) => (response = value));
-
-    const req = http.expectOne(environment.loginEndpoint);
-    req.flush({ ...activeResponse, wallet_status: 'PENDING' }, { status: 200, statusText: 'OK' });
-
-    expect(response).toEqual({ ...activeResponse, wallet_status: 'PENDING' });
-  });
 });
