@@ -1,0 +1,15 @@
+{
+  "success": {
+    "status": "200",
+    "return": {
+      "merchantId": "merchant-demo",
+      "merchantName": "Demo Merchant",
+      "amountCents": 2200,
+      "currency": "PEN"
+    }
+  },
+  "error": {
+    "status": "500",
+    "message": "Internal Server Error"
+  }
+}

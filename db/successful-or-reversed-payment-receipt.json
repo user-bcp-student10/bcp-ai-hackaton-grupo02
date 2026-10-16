@@ -1,0 +1,17 @@
+{
+  "success": {
+    "status": "200",
+    "return": {
+      "receiptId": "receipt-001",
+      "paymentId": "payment-001",
+      "amountCents": 1500,
+      "currency": "PEN",
+      "recipient": "contact-demo",
+      "status": "SUCCEEDED"
+    }
+  },
+  "error": {
+    "status": "500",
+    "message": "Internal Server Error"
+  }
+}

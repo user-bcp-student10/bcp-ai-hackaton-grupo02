@@ -1,0 +1,14 @@
+{
+  "success": {
+    "status": "200",
+    "return": {
+      "id": "reversal-001",
+      "payment_id": "payment-001",
+      "status": "SUCCEEDED"
+    }
+  },
+  "error": {
+    "status": "500",
+    "message": "Internal Server Error"
+  }
+}

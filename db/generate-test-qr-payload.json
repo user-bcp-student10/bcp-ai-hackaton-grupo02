@@ -1,0 +1,15 @@
+{
+  "success": {
+    "status": "201",
+    "return": {
+      "id": "qr-001",
+      "payload": "qrmock:qr-001",
+      "amountCents": 2200,
+      "currency": "PEN"
+    }
+  },
+  "error": {
+    "status": "500",
+    "message": "Internal Server Error"
+  }
+}

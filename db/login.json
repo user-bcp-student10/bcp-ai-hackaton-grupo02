@@ -1,0 +1,9 @@
+{
+  "success": {
+    "status": "REGISTERED"
+  },
+  "error": {
+    "status": "500",
+    "message": "Internal Server Error"
+  }
+}

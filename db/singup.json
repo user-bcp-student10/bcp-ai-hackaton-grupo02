@@ -1,0 +1,13 @@
+{
+  "success": {
+    "status": "201",
+    "return": {
+      "account_id": "account-001",
+      "status": "REGISTERED"
+    }
+  },
+  "error": {
+    "status": "500",
+    "message": "Internal Server Error"
+  }
+}

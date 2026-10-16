@@ -1,0 +1,13 @@
+{
+  "success": {
+    "status": "200",
+    "return": {
+      "status": "MATCHED",
+      "differences": []
+    }
+  },
+  "error": {
+    "status": "500",
+    "message": "Internal Server Error"
+  }
+}
