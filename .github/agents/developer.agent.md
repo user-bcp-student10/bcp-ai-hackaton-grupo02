@@ -1,6 +1,6 @@
 ---
 name: Developer
-description: Implementa un issue aprobado de ReqFlow con alcance controlado, pruebas y trazabilidad hasta Pull Request.
+description: Implementa un issue aprobado de bcp-ai-hackaton con alcance definido en la ruta de ´openspec/changes/..´ debes implementar solo el sepec indicado.
 tools:
   - read
   - edit

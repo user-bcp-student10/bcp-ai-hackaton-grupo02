@@ -1,0 +1,1680 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Wallet mock W0–W6",
+    "version": "0.1.0",
+    "description": "Mock público de la hackatón para 8 grupos fijos. Selecciona el servidor de tu grupo. Estado en memoria por grupo, sin persistencia; puede reiniciarse por inactividad o despliegue. PEN en céntimos. Solo datos TEST. CORS habilitado. Incluye registro e inicio de sesión W0."
+  },
+  "servers": [
+    {
+      "url": "https://bcp-wallet-mock.yefri.workers.dev/groups/2",
+      "description": "Grupo 2"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Salud",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Servicio y grupos"
+        ]
+      }
+    },
+    "/scenarios": {
+      "get": {
+        "summary": "Escenarios disponibles",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Servicio y grupos"
+        ]
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "summary": "Este contrato",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Servicio y grupos"
+        ]
+      }
+    },
+    "/auth/signup": {
+      "post": {
+        "operationId": "signUp",
+        "summary": "Registrar credenciales",
+        "description": "Registra una cuenta de prueba. No inicia sesión ni crea una wallet; el onboarding se completa por separado mediante POST /kyc/verifications. No devuelve la contraseña.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "documentType": {
+                    "type": "string",
+                    "enum": [
+                      "TEST"
+                    ]
+                  },
+                  "document": {
+                    "type": "string",
+                    "pattern": "^TEST-"
+                  },
+                  "password": {
+                    "type": "string",
+                    "writeOnly": true
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  }
+                },
+                "required": [
+                  "documentType",
+                  "document",
+                  "password",
+                  "email"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Cuenta registrada; no se inicia sesión ni se crea una wallet.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "account_id": {
+                      "type": "string",
+                      "example": "account-001"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "REGISTERED"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "account_id",
+                    "status"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VALIDATION_ERROR: falta un campo, un campo tiene tipo o formato incorrecto, el correo no es válido, documentType no es TEST o document no tiene el prefijo TEST-."
+          },
+          "409": {
+            "description": "ACCOUNT_ALREADY_EXISTS: el documento o correo ya está asociado a otra cuenta."
+          },
+          "413": {
+            "description": "PAYLOAD_TOO_LARGE: el cuerpo de la petición excede el tamaño permitido."
+          },
+          "429": {
+            "description": "RATE_LIMITED: se superó el límite de intentos de registro."
+          },
+          "503": {
+            "description": "AUTH_UNAVAILABLE: el servicio de autenticación no está disponible."
+          }
+        },
+        "tags": [
+          "W0 · Registro e inicio de sesión"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "login",
+        "summary": "Iniciar sesión",
+        "description": "Autentica con el tipo y número de documento registrados y la contraseña. Las credenciales válidas reciben un token incluso si la wallet está PENDING o REJECTED. La autenticación no activa ni cambia el estado de la wallet. No devuelve la contraseña.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "documentType": {
+                    "type": "string",
+                    "enum": [
+                      "TEST"
+                    ]
+                  },
+                  "document": {
+                    "type": "string",
+                    "pattern": "^TEST-"
+                  },
+                  "password": {
+                    "type": "string",
+                    "writeOnly": true
+                  }
+                },
+                "required": [
+                  "documentType",
+                  "document",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Inicio de sesión correcto; el estado de la wallet se devuelve sin alterarlo.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "type": "string",
+                      "example": "<token>"
+                    },
+                    "token_type": {
+                      "type": "string",
+                      "enum": [
+                        "Bearer"
+                      ]
+                    },
+                    "expires_in": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "Duración del token en segundos.",
+                      "example": 3600
+                    },
+                    "wallet_id": {
+                      "type": "string",
+                      "example": "wallet-001"
+                    },
+                    "wallet_status": {
+                      "type": "string",
+                      "enum": [
+                        "ACTIVE",
+                        "PENDING",
+                        "REJECTED"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "access_token",
+                    "token_type",
+                    "expires_in",
+                    "wallet_id",
+                    "wallet_status"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VALIDATION_ERROR: falta un campo, un campo tiene tipo incorrecto, documentType no es TEST o document no tiene el prefijo TEST-."
+          },
+          "401": {
+            "description": "INVALID_CREDENTIALS: documento o contraseña incorrectos; la respuesta no distingue cuál falló."
+          },
+          "413": {
+            "description": "PAYLOAD_TOO_LARGE: el cuerpo de la petición excede el tamaño permitido."
+          },
+          "429": {
+            "description": "RATE_LIMITED: se superó el límite de intentos de inicio de sesión."
+          },
+          "503": {
+            "description": "AUTH_UNAVAILABLE: el servicio de autenticación no está disponible."
+          }
+        },
+        "tags": [
+          "W0 · Registro e inicio de sesión"
+        ]
+      }
+    },
+    "/kyc/verifications": {
+      "post": {
+        "summary": "Crear wallet con KYC simulado",
+        "responses": {
+          "201": {
+            "description": "Creado",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Proveedor no disponible",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "documentType": {
+                    "type": "string",
+                    "enum": [
+                      "TEST"
+                    ]
+                  },
+                  "document": {
+                    "type": "string",
+                    "pattern": "^TEST-"
+                  },
+                  "scenario": {
+                    "type": "string",
+                    "enum": [
+                      "APPROVED",
+                      "REJECTED",
+                      "MANUAL_REVIEW",
+                      "UNAVAILABLE"
+                    ]
+                  }
+                },
+                "required": [
+                  "documentType",
+                  "document"
+                ]
+              }
+            }
+          }
+        },
+        "tags": [
+          "W1 · Registro y activación"
+        ]
+      }
+    },
+    "/kyc/verifications/{id}": {
+      "get": {
+        "summary": "Consultar KYC",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No existe",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "W1 · Registro y activación"
+        ]
+      }
+    },
+    "/kyc/verifications/{id}/decision": {
+      "post": {
+        "summary": "Resolver revisión humana",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No existe",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto de estado, saldo o idempotencia",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "decision": {
+                    "type": "string",
+                    "enum": [
+                      "ACTIVE",
+                      "REJECTED"
+                    ]
+                  }
+                },
+                "required": [
+                  "decision"
+                ]
+              }
+            }
+          }
+        },
+        "tags": [
+          "W1 · Registro y activación"
+        ]
+      }
+    },
+    "/wallets/{id}": {
+      "get": {
+        "summary": "Saldo contable, reservado y disponible",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Wallet no encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "enum": [
+                        "NOT_FOUND"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                },
+                "example": {
+                  "error": "NOT_FOUND"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "W1 · Registro y activación"
+        ]
+      }
+    },
+    "/payments": {
+      "post": {
+        "summary": "Crear pago de contacto o comercio",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Pendiente; completar mediante evento",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No existe",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto de estado, saldo o idempotencia",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "QR vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Proveedor no disponible",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Respuesta perdida después de procesar",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "walletId": {
+                    "type": "string"
+                  },
+                  "recipient": {
+                    "type": "string",
+                    "enum": [
+                      "contact-demo",
+                      "merchant-demo"
+                    ]
+                  },
+                  "amountCents": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100000000
+                  },
+                  "currency": {
+                    "type": "string",
+                    "enum": [
+                      "PEN"
+                    ]
+                  },
+                  "scenario": {
+                    "type": "string",
+                    "enum": [
+                      "APPROVED",
+                      "REJECTED",
+                      "PENDING",
+                      "DELAYED_APPROVAL",
+                      "TIMEOUT_AFTER_PROCESSING",
+                      "PROVIDER_ERROR"
+                    ]
+                  },
+                  "qrId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "walletId",
+                  "recipient",
+                  "amountCents"
+                ]
+              }
+            }
+          }
+        },
+        "tags": [
+          "W2 · Pago a contacto"
+        ]
+      },
+      "get": {
+        "summary": "Historial filtrado por walletId",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "walletId",
+            "schema": {
+              "type": "string",
+              "default": "wallet-demo"
+            }
+          }
+        ],
+        "tags": [
+          "W2 · Pago a contacto"
+        ]
+      }
+    },
+    "/payments/{id}": {
+      "get": {
+        "summary": "Consultar pago",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No existe",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "W2 · Pago a contacto"
+        ]
+      }
+    },
+    "/payments/{id}/receipt": {
+      "get": {
+        "summary": "Comprobante de pago exitoso o reversado",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No existe",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto de estado, saldo o idempotencia",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "W2 · Pago a contacto"
+        ]
+      }
+    },
+    "/provider/payments/{id}": {
+      "get": {
+        "summary": "Consultar fuente del proveedor",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No existe",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "W2 · Pago a contacto"
+        ]
+      }
+    },
+    "/reversals/{id}": {
+      "get": {
+        "summary": "Consultar reverso",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No existe",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "W5 · Fallas y reversos"
+        ]
+      }
+    },
+    "/payments/{id}/resolve": {
+      "post": {
+        "summary": "Consultar proveedor y resolver o escalar",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Pendiente; completar mediante evento",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No existe",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto de estado, saldo o idempotencia",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+
+                },
+                "required": []
+              }
+            }
+          }
+        },
+        "tags": [
+          "W5 · Fallas y reversos"
+        ]
+      }
+    },
+    "/payments/{id}/reversals": {
+      "post": {
+        "summary": "Reverso completo, único por pago",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Pendiente; completar mediante evento",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No existe",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto de estado, saldo o idempotencia",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+
+                },
+                "required": []
+              }
+            }
+          }
+        },
+        "tags": [
+          "W5 · Fallas y reversos"
+        ]
+      }
+    },
+    "/qrs": {
+      "post": {
+        "summary": "Generar payload QR de prueba",
+        "responses": {
+          "201": {
+            "description": "Creado",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No existe",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "merchantId": {
+                    "type": "string",
+                    "enum": [
+                      "merchant-demo"
+                    ]
+                  },
+                  "amountCents": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100000000,
+                    "nullable": true
+                  },
+                  "expiresInSeconds": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 86400,
+                    "default": 300
+                  }
+                },
+                "required": []
+              }
+            }
+          }
+        },
+        "tags": [
+          "W3 · Pago QR comercio"
+        ]
+      }
+    },
+    "/qrs/resolve": {
+      "post": {
+        "summary": "Resolver payload local",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No existe",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "QR vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "payload": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "payload"
+                ]
+              }
+            }
+          }
+        },
+        "tags": [
+          "W3 · Pago QR comercio"
+        ]
+      }
+    },
+    "/callbacks/payments": {
+      "post": {
+        "summary": "Consumir evento conocido del proveedor local",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No existe",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto de estado, saldo o idempotencia",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "eventId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "eventId"
+                ]
+              }
+            }
+          }
+        },
+        "tags": [
+          "W4 · Idempotencia y callbacks"
+        ]
+      }
+    },
+    "/control/events": {
+      "get": {
+        "summary": "Eventos con contador de entrega",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Controles del mock"
+        ]
+      }
+    },
+    "/ledger": {
+      "get": {
+        "summary": "Asientos de partida doble",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "W6 · Conciliación"
+        ]
+      }
+    },
+    "/support/cases": {
+      "get": {
+        "summary": "Casos abiertos y resueltos",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "W5 · Fallas y reversos"
+        ]
+      }
+    },
+    "/settlements": {
+      "get": {
+        "summary": "Reporte simulado completo, sin corte diario",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "W6 · Conciliación"
+        ]
+      }
+    },
+    "/reconciliations/incidents": {
+      "get": {
+        "summary": "Historial de incidencias",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "W6 · Conciliación"
+        ]
+      }
+    },
+    "/control/events/{id}/deliver": {
+      "post": {
+        "summary": "Entregar o repetir evento local",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No existe",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto de estado, saldo o idempotencia",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+
+                },
+                "required": []
+              }
+            }
+          }
+        },
+        "tags": [
+          "Controles del mock"
+        ]
+      }
+    },
+    "/control/provider/{id}/complete": {
+      "post": {
+        "summary": "Finalizar proveedor pendiente y encolar evento",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No existe",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto de estado, saldo o idempotencia",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "SUCCEEDED",
+                      "REJECTED"
+                    ]
+                  }
+                },
+                "required": []
+              }
+            }
+          }
+        },
+        "tags": [
+          "Controles del mock"
+        ]
+      }
+    },
+    "/control/settlements": {
+      "post": {
+        "summary": "Alterar reporte sin modificar wallet ni ledger",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No existe",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto de estado, saldo o idempotencia",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "paymentId": {
+                    "type": "string"
+                  },
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "MISSING",
+                      "AMOUNT",
+                      "DUPLICATE",
+                      "ORPHAN",
+                      "CLEAR"
+                    ]
+                  },
+                  "amountCents": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100000000
+                  }
+                },
+                "required": [
+                  "paymentId",
+                  "mode"
+                ]
+              }
+            }
+          }
+        },
+        "tags": [
+          "Controles del mock"
+        ]
+      }
+    },
+    "/reconciliations": {
+      "post": {
+        "summary": "Comparar fuentes y actualizar incidencias",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+
+                },
+                "required": []
+              }
+            }
+          }
+        },
+        "tags": [
+          "W6 · Conciliación"
+        ]
+      }
+    },
+    "/control/reset": {
+      "post": {
+        "summary": "Borrar datos locales y reponer semilla",
+        "responses": {
+          "200": {
+            "description": "Consulta o repetición",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+
+                },
+                "required": []
+              }
+            }
+          }
+        },
+        "tags": [
+          "Controles del mock"
+        ]
+      }
+    },
+    "/groups": {
+      "get": {
+        "tags": [
+          "Servicio y grupos"
+        ],
+        "summary": "Listar los ocho grupos y sus URLs fijas",
+        "servers": [
+          {
+            "url": "https://bcp-wallet-mock.yefri.workers.dev"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de los ocho grupos, con groupId, name, baseUrl y openapiUrl"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "W0 · Registro e inicio de sesión",
+      "description": "Registrar credenciales e iniciar sesión sin cambiar el estado de la wallet."
+    },
+    {
+      "name": "Servicio y grupos",
+      "description": "Disponibilidad, contrato OpenAPI y URLs fijas de los ocho grupos."
+    },
+    {
+      "name": "W1 · Registro y activación",
+      "description": "Crear cuentas de prueba, consultar KYC y resolver la revisión humana."
+    },
+    {
+      "name": "W2 · Pago a contacto",
+      "description": "Crear pagos, consultar su resultado, historial y comprobante. También se usa al confirmar pagos QR."
+    },
+    {
+      "name": "W3 · Pago QR comercio",
+      "description": "Generar y resolver QR de prueba antes de crear el pago en W2."
+    },
+    {
+      "name": "W4 · Idempotencia y callbacks",
+      "description": "Entregar eventos o repetirlos sin duplicar cargos. Los reintentos de creación se prueban con Idempotency-Key en POST /payments de W2."
+    },
+    {
+      "name": "W5 · Fallas y reversos",
+      "description": "Consultar resultados inciertos, simular reversos y revisar casos de soporte."
+    },
+    {
+      "name": "W6 · Conciliación",
+      "description": "Comparar wallet, proveedor y ledger; consultar incidencias y asientos."
+    },
+    {
+      "name": "Controles del mock",
+      "description": "Avanzar el proveedor, entregar eventos, alterar reportes y reiniciar los datos. Afectan solo al grupo actual."
+    }
+  ]
+}
