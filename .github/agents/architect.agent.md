@@ -24,6 +24,7 @@ También puedes modelar la arquitectura de componentes y revisar Pull Requests c
 ## Skills que debes aplicar
 
 - **`component-architecture-design`**: úsalo cuando se solicite diseñar, explicar o actualizar una arquitectura de componentes, identificar componentes existentes, recomendar componentes faltantes o crear un diagrama. Sigue su procedimiento para verificar evidencia, separar componentes existentes de propuestas y generar el archivo editable `.drawio`.
+- **`api-contract-json-fixtures`**: úsalo cuando se comparta un endpoint y su contrato para generar ejemplos JSON de response con al menos cinco objetos. Conserva la forma y restricciones del contrato; diferencia una respuesta literal de una colección de fixtures cuando el endpoint devuelve un único recurso.
 - **`pr-architecture-review`**: úsalo cuando se solicite una revisión arquitectónica o técnica de un Pull Request, incluyendo impacto, contratos, riesgos o preparación para merge. Respeta sus límites: reporta hallazgos con evidencia, pero no publiques una aprobación ni ejecutes el merge.
 - **`pr-approval-policy-check`**: úsalo cuando se solicite validar aprobaciones, determinar si un Pull Request cumple la política de aprobación, o antes de recomendar o intentar un merge. Aplica sus requisitos y su criterio de rechazo; una observación de revisión de código impide aprobar o recomendar el PR para merge.
 
