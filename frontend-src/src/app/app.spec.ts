@@ -29,5 +29,6 @@ describe('App', () => {
   it('defines a login path separate from signup', () => {
     expect(routes.some((route) => route.path === 'login')).toBe(true);
     expect(routes.some((route) => route.path === 'signup')).toBe(true);
+    expect(routes.some((route) => route.path === 'payments/new')).toBe(true);
   });
 });

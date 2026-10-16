@@ -7,6 +7,7 @@ Servicio Node.js y Express para `POST /auth/signup` y `POST /auth/login`, confor
 - Node.js 22.13 o posterior; usa `node:sqlite` y `node:crypto` del runtime.
 - Instalar dependencias con `npm install`.
 - Configurar `AUTH_MAX_PAYLOAD_BYTES`, `AUTH_RATE_LIMIT_MAX` y `AUTH_RATE_LIMIT_WINDOW_MS` antes de iniciar el servidor. No hay umbrales aprobados en el repositorio, por lo que el servicio no inventa valores predeterminados.
+- CORS usa `AUTH_CORS_ORIGINS`, una lista separada por comas de orígenes exactos. El valor local predeterminado es `http://127.0.0.1:4200`; configura explícitamente el origen del frontend en otros entornos. No se permiten `*` ni credenciales/cookies. El preflight autoriza `POST` y `OPTIONS` con `Content-Type` para signup/login.
 
 `db/users.json` es la persistencia de cuentas para W0. Signup agrega allí usuarios `TEST`, `DNI` o `CE`, con `account_id` y hash/salt de contraseña, sin incluir el campo `password`; login valida el documento y verifica la contraseña contra el mismo archivo. Los registros heredados se conservan sin modificación; cuando uno no tenga `account_id`, W0 genera un identificador estable derivado del tipo y documento sin escribirlo en el archivo.
 
